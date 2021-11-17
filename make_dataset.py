@@ -86,22 +86,30 @@ def gaussian_filter_density(gt):
     print ('done.')
     return density
 
+# Local Machine
+# root = 'C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\'
+# part_A_train = os.path.join(root,'part_A\\train_data','images')
+# part_A_test = os.path.join(root,'part_A\\test_data','images')
+# part_B_train = os.path.join(root,'part_B\\train_data','images')
+# part_B_test = os.path.join(root,'part_B\\test_data','images')
+# path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
 
-root = 'C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\'
-part_A_train = os.path.join(root,'part_A\\train_data','images')
-part_A_test = os.path.join(root,'part_A\\test_data','images')
-part_B_train = os.path.join(root,'part_B\\train_data','images')
-part_B_test = os.path.join(root,'part_B\\test_data','images')
-#path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
+# Google Collab
+root = 'drive/MyDrive/Projek Akhir/dataset/ShanghaiTech/'
+part_A_train = os.path.join(root,'part_A/train_data_full','images')
+part_A_test = os.path.join(root,'part_A/test_data_full','images')
+part_B_train = os.path.join(root,'part_B/train_data_full','images')
+part_B_test = os.path.join(root,'part_B/test_data_full','images')
+path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
 
-path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
-path_sets = [path1]
+
+# path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
+# path_sets = [path1]
 
 img_paths = []
-img_paths.append(path1)
-# for path in path_sets:
-#     for img_path in glob.glob(os.path.join(path, '*.jpg')):
-#         img_paths.append(img_path)
+for path in path_sets:
+    for img_path in glob.glob(os.path.join(path, '*.jpg')):
+        img_paths.append(img_path)
 
 for img_path in img_paths:
     print (img_path)
