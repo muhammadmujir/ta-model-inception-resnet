@@ -41,6 +41,7 @@ def generateTrainList():
     imagePath = "["
     for i in range(1,301):
         imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/train_data_full/images/"
+        #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
         if (i < 300):
             imagePath = imagePath+", "
@@ -53,6 +54,7 @@ def generateTestList():
     imagePath = "["
     for i in range(1,183):
         imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/test_data_full/images/"
+        #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\test_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
         if (i < 182):
             imagePath = imagePath+", "
@@ -60,6 +62,8 @@ def generateTestList():
             imagePath = imagePath+"]"
     return imagePath
 
+print(generateTrainList())
+print(generateTestList())
 # ===================================================================================
 
 
@@ -83,16 +87,9 @@ def main():
     args.seed = time.time()
     args.print_freq = 2
     
-    # with open(args.train_json, 'r') as outfile:        
-    #     train_list = json.load(outfile)
-    # with open(args.test_json, 'r') as outfile:       
-    #     val_list = json.load(outfile)
-    
-    train_json = generateTrainList()
-    test_json = generateTestList()
-    with open(train_json, 'r') as outfile:        
+    with open(args.train_json, 'r') as outfile:        
         train_list = json.load(outfile)
-    with open(test_json, 'r') as outfile:       
+    with open(args.test_json, 'r') as outfile:       
         val_list = json.load(outfile)
         
         
