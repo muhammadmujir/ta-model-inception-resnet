@@ -22,10 +22,10 @@ import time
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
-parser.add_argument('train_json', metavar='TRAIN',
-                    help='path to train json')
-parser.add_argument('test_json', metavar='TEST',
-                    help='path to test json')
+# parser.add_argument('train_json', metavar='TRAIN',
+#                     help='path to train json')
+# parser.add_argument('test_json', metavar='TEST',
+#                     help='path to test json')
 
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
@@ -35,6 +35,33 @@ parser.add_argument('gpu',metavar='GPU', type=str,
 
 parser.add_argument('task',metavar='TASK', type=str,
                     help='task id to use.')
+# ===================================================================================
+
+def generateTrainList():
+    imagePath = "["
+    for i in range(1,301):
+        imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/train_data_full/images/"
+        imagePath = imagePath + "IMG_"+str(i)+".jpg\""
+        if (i < 300):
+            imagePath = imagePath+", "
+        if (i == 300):
+            imagePath = imagePath+"]"
+    return imagePath
+
+
+def generateTestList():
+    imagePath = "["
+    for i in range(1,183):
+        imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/test_data_full/images/"
+        imagePath = imagePath + "IMG_"+str(i)+".jpg\""
+        if (i < 182):
+            imagePath = imagePath+", "
+        if (i == 182):
+            imagePath = imagePath+"]"
+    return imagePath
+
+# ===================================================================================
+
 
 def main():
     
@@ -55,11 +82,20 @@ def main():
     args.workers = 4
     args.seed = time.time()
     args.print_freq = 2
-    with open(args.train_json, 'r') as outfile:        
-        train_list = json.load(outfile)
-    with open(args.test_json, 'r') as outfile:       
-        val_list = json.load(outfile)
     
+    # with open(args.train_json, 'r') as outfile:        
+    #     train_list = json.load(outfile)
+    # with open(args.test_json, 'r') as outfile:       
+    #     val_list = json.load(outfile)
+    
+    train_json = generateTrainList()
+    test_json = generateTestList()
+    with open(train_json, 'r') as outfile:        
+        train_list = json.load(outfile)
+    with open(test_json, 'r') as outfile:       
+        val_list = json.load(outfile)
+        
+        
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     torch.cuda.manual_seed(args.seed)
     
@@ -111,29 +147,6 @@ def main():
         
         
 # =====================================================================
-
-def generateTrainList():
-    imagePath = "["
-    for i in range(1,301):
-        imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data_full\\images\\"
-        imagePath = imagePath + "IMG_"+str(i)+".jpg\""
-        if (i < 300):
-            imagePath = imagePath+", "
-        if (i == 300):
-            imagePath = imagePath+"]"
-    return imagePath
-
-
-def generateTestList():
-    imagePath = "["
-    for i in range(1,183):
-        imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\test_data_full\\images\\"
-        imagePath = imagePath + "IMG_"+str(i)+".jpg\""
-        if (i < 182):
-            imagePath = imagePath+", "
-        if (i == 182):
-            imagePath = imagePath+"]"
-    return imagePath
 
 
 def train(train_list, model, criterion, optimizer, epoch):
@@ -310,3 +323,4 @@ class AverageMeter(object):
     
 if __name__ == '__main__':
     main()        
+    # to run in colab "!python train.py 0 0
