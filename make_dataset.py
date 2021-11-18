@@ -100,7 +100,8 @@ part_A_train = os.path.join(root,'part_A/train_data_full','images')
 part_A_test = os.path.join(root,'part_A/test_data_full','images')
 part_B_train = os.path.join(root,'part_B/train_data_full','images')
 part_B_test = os.path.join(root,'part_B/test_data_full','images')
-path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
+#path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
+path_sets = [part_B_test]
 
 
 # path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
