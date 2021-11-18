@@ -67,7 +67,7 @@ def gaussian_filter_density(gt):
         
         pt2d = np.zeros(gt.shape, dtype=np.float32)
         pt2d[pt[1],pt[0]] = 1.
-        print(pt[0], " :: ", pt[1])
+        # print(pt[0], " :: ", pt[1])
         
         if gt_count > 1:
             sigma = (distances[i][1]+distances[i][2]+distances[i][3])*0.1
@@ -121,7 +121,7 @@ for img_path in img_paths:
     # img.shape[1] -> width/column
     print(img.shape[0]," :: ",img.shape[1])
     # print("GT ", mat)
-    print("==========================================")
+    #print("==========================================")
     pointCount = 0;
     totalPoint = 0;
     for i in range(0,len(gt)):
@@ -131,12 +131,12 @@ for img_path in img_paths:
             # gt[i][1] -> Height -> row in matrix
             k[int(gt[i][1]),int(gt[i][0])]=1
             
-            print(gt[i][0], " :: ", gt[i][1])
+            # print(gt[i][0], " :: ", gt[i][1])
             pointCount = pointCount+1
         totalPoint = totalPoint+1
-    print("Total Point: ", totalPoint)
-    print("POINT COUNT: ", pointCount)
-    print("==========================================")
+    #print("Total Point: ", totalPoint)
+    #print("POINT COUNT: ", pointCount)
+    #print("==========================================")
     k = gaussian_filter_density(k)
     with h5py.File(img_path.replace('.jpg','.h5').replace('images','ground-truth'), 'w') as hf:
             hf['density'] = k
