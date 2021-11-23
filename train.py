@@ -201,7 +201,7 @@ def train(train_list, model, criterion, optimizer, epoch):
             img = img.cpu()
         img = Variable(img)
         output = model(img)
-        
+        print("Image-",str(i))
         
         # my_tensor = torch.tensor([1,3,4])
         # tensor([1,3,4])
@@ -220,30 +220,30 @@ def train(train_list, model, criterion, optimizer, epoch):
             target = target.type(torch.FloatTensor).unsqueeze(0).cuda()
         else:
             target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
-        print("///PREV TARGET///\n",target[0][0].shape)
-        print("///TARGET SHAPE///\n",target.shape)
+        #print("///PREV TARGET///\n",target[0][0].shape)
+        #print("///TARGET SHAPE///\n",target.shape)
         target = Variable(target)
         
-        print("///OUTPUT///\n", output)
-        print("///SHAPE OUTPUT///\n", output.shape)
-        print("///SHAPE TARGET///\n", target.shape)
+        #print("///OUTPUT///\n", output)
+        #print("///SHAPE OUTPUT///\n", output.shape)
+        #print("///SHAPE TARGET///\n", target.shape)
         # cv2.resize -> target is resized with division by 8 -> check image.py
         widthScale = target.shape[3]/output.shape[3]
         heightScale = target.shape[2]/output.shape[2]
-        print("WIDTH SCALE", widthScale)
-        print("HEIGHT SCALE", heightScale)
-        print("NUMPY TARGET ",np.float32(target[0][0]))
+        #print("WIDTH SCALE", widthScale)
+        #print("HEIGHT SCALE", heightScale)
+        #print("NUMPY TARGET ",np.float32(target[0][0]))
         target = cv2.resize(np.float32(target[0][0]),(output.shape[3],output.shape[2]),interpolation = cv2.INTER_CUBIC)*64
         if (args.gpu != "-1"):
             target = torch.FloatTensor(target).unsqueeze(0).unsqueeze(0).cuda()
         else:
             target = torch.FloatTensor(target).unsqueeze(0).unsqueeze(0).cpu()
         target = Variable(target)
-        print("TARGET SHAPE AFTER RESIZE",target.shape)
+        #print("TARGET SHAPE AFTER RESIZE",target.shape)
         
         loss = criterion(output, target)
         losses.update(loss.item(), img.size(0))
-        print(img.size(0))
+        #print(img.size(0))
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()    
