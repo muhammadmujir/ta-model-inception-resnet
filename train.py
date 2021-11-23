@@ -216,7 +216,10 @@ def train(train_list, model, criterion, optimizer, epoch):
         #         [4]])
         # shape : (3,1) --> 2 Dimension
         
-        target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
+        if (args.gpu != "-1"):
+            target = target.type(torch.FloatTensor).unsqueeze(0).cuda()
+        else:
+            target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
         print("///PREV TARGET///\n",target[0][0].shape)
         print("///TARGET SHAPE///\n",target.shape)
         target = Variable(target)
@@ -231,7 +234,10 @@ def train(train_list, model, criterion, optimizer, epoch):
         print("HEIGHT SCALE", heightScale)
         print("NUMPY TARGET ",np.float32(target[0][0]))
         target = cv2.resize(np.float32(target[0][0]),(output.shape[3],output.shape[2]),interpolation = cv2.INTER_CUBIC)*64
-        target = torch.FloatTensor(target).unsqueeze(0).unsqueeze(0).cpu()
+        if (args.gpu != "-1"):
+            target = torch.FloatTensor(target).unsqueeze(0).unsqueeze(0).cuda()
+        else:
+            target = torch.FloatTensor(target).unsqueeze(0).unsqueeze(0).cpu()
         target = Variable(target)
         print("TARGET SHAPE AFTER RESIZE",target.shape)
         
@@ -276,7 +282,10 @@ def validate(val_list, model, criterion):
     mae = 0
     
     for i,(img, target) in enumerate(test_loader):
-        img = img.cpu()
+        if (args.gpu != "-1"):
+            img = img.cuda()
+        else:
+            img = img.cpu()
         img = Variable(img)
         output = model(img)
         
