@@ -19,6 +19,7 @@ import json
 import cv2
 import dataset
 import time
+from constant import *
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -40,7 +41,7 @@ parser.add_argument('task',metavar='TASK', type=str,
 def generateTrainList():
     imagePath = "["
     for i in range(1,301):
-        imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/train_data_full/images/"
+        imagePath = imagePath + "\"" + DATASET1_TRAIN_A
         #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
         if (i < 300):
@@ -53,7 +54,7 @@ def generateTrainList():
 def generateTestList():
     imagePath = "["
     for i in range(1,183):
-        imagePath = imagePath + "\"drive:/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/test_data_full/images/"
+        imagePath = imagePath + "\""+DATASET1_TEST_A
         #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\test_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
         if (i < 182):
@@ -98,11 +99,15 @@ def main():
     
     #model = CSRNet()
     model = InceptionResNetV2()
-    
-    model = model.cpu()
-    
-    criterion = nn.MSELoss(size_average=False).cpu()
-    
+    if (args.gpu != "-1"):
+        model = model.cuda()
+    else :
+        model = model.cpu()
+    if (args.gpu != "-1"):
+        criterion = nn.MSELoss(size_average=False).cuda()
+    else:
+        criterion = nn.MSELoss(size_average=False).cpu()
+        
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
@@ -190,8 +195,10 @@ def train(train_list, model, criterion, optimizer, epoch):
     
     for i,(img, target)in enumerate(train_loader):
         data_time.update(time.time() - end)
-        
-        img = img.cpu()
+        if (args.gpu != "-1"):
+            img = img.cuda()
+        else:
+            img = img.cpu()
         img = Variable(img)
         output = model(img)
         
@@ -273,8 +280,10 @@ def validate(val_list, model, criterion):
         img = Variable(img)
         output = model(img)
         
-        mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
-        
+        if (args.gpu != "-1"):
+            mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+        else:
+            mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
     mae = mae/len(test_loader)    
     print(' * MAE {mae:.3f} '
               .format(mae=mae))
