@@ -40,26 +40,26 @@ parser.add_argument('task',metavar='TASK', type=str,
 
 def generateTrainList():
     imagePath = "["
-    for i in range(1,301):
-        imagePath = imagePath + "\"" + DATASET1_TRAIN_A
+    for i in range(1,401):
+        imagePath = imagePath + "\"" + DATASET1_TRAIN_B
         #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
-        if (i < 300):
+        if (i < 400):
             imagePath = imagePath+", "
-        if (i == 300):
+        if (i == 400):
             imagePath = imagePath+"]"
     return imagePath
 
 
 def generateTestList():
     imagePath = "["
-    for i in range(1,183):
-        imagePath = imagePath + "\""+DATASET1_TEST_A
+    for i in range(1,317):
+        imagePath = imagePath + "\""+DATASET1_TEST_B
         #imagePath = imagePath + "\"C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\test_data\\images\\"
         imagePath = imagePath + "IMG_"+str(i)+".jpg\""
-        if (i < 182):
+        if (i < 316):
             imagePath = imagePath+", "
-        if (i == 182):
+        if (i == 316):
             imagePath = imagePath+"]"
     return imagePath
 
