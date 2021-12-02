@@ -10,4 +10,4 @@ DATASET1_TRAIN_A = BASE_PATH + "dataset/ShanghaiTech/part_A/train_data_full/imag
 DATASET1_TEST_A = BASE_PATH + "dataset/ShanghaiTech/part_A/test_data_full/images/"
 DATASET1_TRAIN_B = BASE_PATH + "dataset/ShanghaiTech/part_B/train_data_full/images/"
 DATASET1_TEST_B = BASE_PATH + "dataset/ShanghaiTech/part_B/test_data_full/images/"
-CHECKPOINT_PATH = BASE_PATH + "result/"
+CHECKPOINT_PATH = "../drive:/MyDrive/Projek Akhir/" + "result/"
