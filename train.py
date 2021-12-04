@@ -193,7 +193,12 @@ def train(train_list, model, criterion, optimizer, epoch):
     model.train()
     end = time.time()
     
-    resultCSV = open('result.csv', 'w')
+    resultCSV = None
+    if (epoch == 0):
+        resultCSV = open('result.csv', 'w')
+    else:
+        resultCSV = open('result.csv', 'a')
+    
     resultCSV.write('%s;' % "EPOCH: "+str(epoch))
     resultCSV.write('\n')
     resultCSV.write('%s;' % "IMAGE_PATH")
