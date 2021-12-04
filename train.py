@@ -194,7 +194,7 @@ def train(train_list, model, criterion, optimizer, epoch):
     end = time.time()
     
     resultCSV = open('result.csv', 'w')
-    resultCSV.write('%s;' % "EPOCH: "+epoch)
+    resultCSV.write('%s;' % "EPOCH: "+str(epoch))
     resultCSV.write('\n')
     resultCSV.write('%s;' % "IMAGE_PATH")
     resultCSV.write('%s;' % "LOSS")
