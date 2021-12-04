@@ -81,7 +81,7 @@ def main():
     args.momentum      = 0.95
     args.decay         = 5*1e-4
     args.start_epoch   = 0
-    args.epochs = 8
+    args.epochs = 1
     args.steps         = [-1,1,100,150]
     args.scales        = [1,1,1,1]
     args.workers = 4
@@ -264,6 +264,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         end = time.time()
         
         if i % args.print_freq == 0:
+            print("LOSS: ", str(losses.val))
             resultCSV.write('%s;' % str(img_path))
             resultCSV.write('%.4f;' % losses.val)
             print('Epoch: [{0}][{1}/{2}]\t'
