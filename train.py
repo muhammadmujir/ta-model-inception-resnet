@@ -86,7 +86,7 @@ def main():
     args.scales        = [1,1,1,1]
     args.workers = 4
     args.seed = time.time()
-    args.print_freq = 2
+    args.print_freq = 1
     
     with open(args.train_json, 'r') as outfile:        
         train_list = json.load(outfile)
@@ -193,7 +193,14 @@ def train(train_list, model, criterion, optimizer, epoch):
     model.train()
     end = time.time()
     
-    for i,(img, target)in enumerate(train_loader):
+    resultCSV = open('result.csv', 'w')
+    resultCSV.write('%s;' % "EPOCH: "+epoch)
+    resultCSV.write('\n')
+    resultCSV.write('%s;' % "IMAGE_PATH")
+    resultCSV.write('%s;' % "LOSS")
+    resultCSV.write('\n')
+    
+    for i,(img, target, img_path)in enumerate(train_loader):
         data_time.update(time.time() - end)
         if (args.gpu != "-1"):
             img = img.cuda()
@@ -201,7 +208,7 @@ def train(train_list, model, criterion, optimizer, epoch):
             img = img.cpu()
         img = Variable(img)
         output = model(img)
-        print("Image-",str(i))
+        print("Image-", img_path)
         
         # my_tensor = torch.tensor([1,3,4])
         # tensor([1,3,4])
@@ -252,6 +259,8 @@ def train(train_list, model, criterion, optimizer, epoch):
         end = time.time()
         
         if i % args.print_freq == 0:
+            resultCSV.write('%s;' % str(img_path))
+            resultCSV.write('%s;' % '{loss.val:.4f}')
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -259,6 +268,9 @@ def train(train_list, model, criterion, optimizer, epoch):
                   .format(
                    epoch, i, len(train_loader), batch_time=batch_time,
                    data_time=data_time, loss=losses))
+        resultCSV.write('\n')
+    
+    resultCSV.close()
     
 def validate(val_list, model, criterion):
     print ('begin test')

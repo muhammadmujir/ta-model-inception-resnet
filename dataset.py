@@ -42,4 +42,4 @@ class listDataset(Dataset):
         
         if self.transform is not None:
             img = self.transform(img)
-        return img,target
+        return img,target,img_path
