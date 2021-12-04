@@ -81,7 +81,7 @@ def main():
     args.momentum      = 0.95
     args.decay         = 5*1e-4
     args.start_epoch   = 0
-    args.epochs = 1
+    args.epochs = 10
     args.steps         = [-1,1,100,150]
     args.scales        = [1,1,1,1]
     args.workers = 4
@@ -195,9 +195,9 @@ def train(train_list, model, criterion, optimizer, epoch):
     
     resultCSV = None
     if (epoch == 0):
-        resultCSV = open('result.csv', 'w')
+        resultCSV = open(BASE_PATH+'result/result.csv', 'w')
     else:
-        resultCSV = open('result.csv', 'a')
+        resultCSV = open(BASE_PATH+'result/result.csv', 'a')
     
     resultCSV.write('%s;' % "EPOCH: "+str(epoch))
     resultCSV.write('\n')
