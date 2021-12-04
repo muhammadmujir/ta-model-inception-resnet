@@ -81,7 +81,7 @@ def main():
     args.momentum      = 0.95
     args.decay         = 5*1e-4
     args.start_epoch   = 0
-    args.epochs = 2
+    args.epochs = 3
     args.steps         = [-1,1,100,150]
     args.scales        = [1,1,1,1]
     args.workers = 4
@@ -133,11 +133,24 @@ def main():
         
         adjust_learning_rate(optimizer, epoch)
         
+        resultCSV = None
+        if (epoch == 0):
+            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
+        else:
+            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
+            
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
         
         is_best = prec1 < best_prec1
         best_prec1 = min(prec1, best_prec1)
+        
+        resultCSV.write('%s;' % "BEST MAE")
+        resultCSV.write('%s;' % str(best_prec1).replace(".", ",",1))
+        resultCSV.write('\n')
+        
+        resultCSV.close()
+        
         print(' * best MAE {mae:.3f} '.format(mae=best_prec1))
         save_checkpoint({
             'epoch': epoch + 1,
@@ -193,16 +206,11 @@ def train(train_list, model, criterion, optimizer, epoch):
     model.train()
     end = time.time()
     
-    resultCSV = None
-    if (epoch == 0):
-        resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
-    else:
-        resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
-    
     resultCSV.write('%s;' % "EPOCH: "+str(epoch))
     resultCSV.write('\n')
     resultCSV.write('%s;' % "IMAGE_PATH")
     resultCSV.write('%s;' % "LOSS")
+    resultCSV.write('%s;' % "LOSS AVG")
     resultCSV.write('\n')
     
     for i,(img, target, img_path)in enumerate(train_loader):
@@ -266,6 +274,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         if i % args.print_freq == 0:
             resultCSV.write('%s;' % str(img_path))
             resultCSV.write('%s;' % str(losses.val).replace(".", ",",1))
+            resultCSV.write('%s;' % str(losses.avg).replace(".", ",",1))
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -274,8 +283,6 @@ def train(train_list, model, criterion, optimizer, epoch):
                    epoch, i, len(train_loader), batch_time=batch_time,
                    data_time=data_time, loss=losses))
         resultCSV.write('\n')
-    
-    resultCSV.close()
     
 def validate(val_list, model, criterion):
     print ('begin test')
@@ -298,6 +305,11 @@ def validate(val_list, model, criterion):
     
     mae = 0
     
+    resultCSV.write('\n')
+    resultCSV.write('%s;' % "IMAGE_PATH")
+    resultCSV.write('%s;' % "MAE")
+    resultCSV.write('\n')
+    
     for i,(img, target,img_path) in enumerate(test_loader):
         if (args.gpu != "-1"):
             img = img.cuda()
@@ -306,11 +318,24 @@ def validate(val_list, model, criterion):
         img = Variable(img)
         output = model(img)
         
+        resultCSV.write('%s;' % str(img_path))
+        
         if (args.gpu != "-1"):
-            mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+            currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+            resultCSV.write('%s;' % str(currentMae).replace(".", ",",1))
+            mae += currentMae
         else:
-            mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+            currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+            resultCSV.write('%s;' % str(currentMae).replace(".", ",",1))
+            mae += currentMae
+        
+        resultCSV.write('\n')
+        
     mae = mae/len(test_loader)    
+    resultCSV.write('\n')
+    resultCSV.write('%s;' % "MAE_AVG")
+    resultCSV.write('%s;' % str(mae).replace(".", ",",1))
+    resultCSV.write('\n')
     print(' * MAE {mae:.3f} '
               .format(mae=mae))
 
