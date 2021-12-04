@@ -68,6 +68,8 @@ print(generateTestList())
 # ===================================================================================
 
 
+resultCSV = None
+
 def main():
     
     global args,best_prec1
@@ -133,7 +135,6 @@ def main():
         
         adjust_learning_rate(optimizer, epoch)
         
-        resultCSV = None
         if (epoch == 0):
             resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
         else:
