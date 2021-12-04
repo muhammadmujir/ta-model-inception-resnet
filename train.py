@@ -293,7 +293,7 @@ def validate(val_list, model, criterion):
     
     mae = 0
     
-    for i,(img, target) in enumerate(test_loader):
+    for i,(img, target,img_path) in enumerate(test_loader):
         if (args.gpu != "-1"):
             img = img.cuda()
         else:
