@@ -195,9 +195,9 @@ def train(train_list, model, criterion, optimizer, epoch):
     
     resultCSV = None
     if (epoch == 0):
-        resultCSV = open(BASE_PATH+'result/result.csv', 'w')
+        resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
     else:
-        resultCSV = open(BASE_PATH+'result/result.csv', 'a')
+        resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
     
     resultCSV.write('%s;' % "EPOCH: "+str(epoch))
     resultCSV.write('\n')
