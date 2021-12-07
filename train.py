@@ -72,7 +72,7 @@ resultCSV = None
 
 def main():
     
-    global args,best_prec1
+    global args,best_prec1,resultCSV
     
     best_prec1 = 1e6
     
