@@ -83,7 +83,7 @@ def main():
     args.momentum      = 0.95
     args.decay         = 5*1e-4
     args.start_epoch   = 0
-    args.epochs = 3
+    args.epochs = 4
     args.steps         = [-1,1,100,150]
     args.scales        = [1,1,1,1]
     args.workers = 4
@@ -147,7 +147,7 @@ def main():
         best_prec1 = min(prec1, best_prec1)
         
         resultCSV.write('%s;' % "BEST MAE")
-        resultCSV.write('%s;' % str(best_prec1).replace(".", ",",1))
+        resultCSV.write('%s;' % str(best_prec1.numpy()).replace(".", ",",1))
         resultCSV.write('\n')
         
         resultCSV.close()
@@ -323,11 +323,11 @@ def validate(val_list, model, criterion):
         
         if (args.gpu != "-1"):
             currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
-            resultCSV.write('%s;' % str(currentMae).replace(".", ",",1))
+            resultCSV.write('%s;' % str(currentMae.numpy()).replace(".", ",",1))
             mae += currentMae
         else:
             currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
-            resultCSV.write('%s;' % str(currentMae).replace(".", ",",1))
+            resultCSV.write('%s;' % str(currentMae.numpy()).replace(".", ",",1))
             mae += currentMae
         
         resultCSV.write('\n')
@@ -335,7 +335,7 @@ def validate(val_list, model, criterion):
     mae = mae/len(test_loader)    
     resultCSV.write('\n')
     resultCSV.write('%s;' % "MAE_AVG")
-    resultCSV.write('%s;' % str(mae).replace(".", ",",1))
+    resultCSV.write('%s;' % str(mae.numpy()).replace(".", ",",1))
     resultCSV.write('\n')
     print(' * MAE {mae:.3f} '
               .format(mae=mae))
