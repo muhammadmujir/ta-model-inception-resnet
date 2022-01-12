@@ -137,11 +137,11 @@ def main():
         adjust_learning_rate(optimizer, epoch)
         
         if (epoch == 0):
-            # resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
-            resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'w')
+            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
+            # resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'w')
         else:
-            # resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
-            resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'a')
+            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
+            # resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'a')
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
         
