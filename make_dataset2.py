@@ -116,7 +116,7 @@ path_sets = [path_train]
 
 img_paths = []
 for path in path_sets:
-    for img_path in range(830,831):
+    for img_path in range(831,851):
         img_paths.append(path+"\\img_0"+str(img_path)+".jpg")
 
 # for path in path_sets:

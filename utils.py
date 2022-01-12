@@ -2,6 +2,7 @@ import h5py
 import torch
 import shutil
 from constant import CHECKPOINT_PATH
+from constant import CHECKPOINT_PATH_LOCAL
 
 def save_net(fname, net):
     with h5py.File(fname, 'w') as h5f:
@@ -14,6 +15,6 @@ def load_net(fname, net):
             v.copy_(param)
             
 def save_checkpoint(state, is_best,task_id, filename='checkpoint.pth.tar'):
-    torch.save(state, CHECKPOINT_PATH+task_id+filename)
+    torch.save(state, CHECKPOINT_PATH_LOCAL+task_id+filename)
     if is_best:
-        shutil.copyfile(CHECKPOINT_PATH+task_id+filename, CHECKPOINT_PATH+task_id+'model_best.pth.tar')            
+        shutil.copyfile(CHECKPOINT_PATH_LOCAL+task_id+filename, CHECKPOINT_PATH_LOCAL+task_id+'model_best.pth.tar')            

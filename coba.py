@@ -64,3 +64,23 @@ for i in range(len(conv)):
         width,height = dimenOfPooling(width=width, height=height)
     
     print(width,height)
+
+# =======================================================================================
+# MSE LOSS
+# =======================================================================================
+
+import torch
+import torch.nn as nn
+
+loss = nn.MSELoss(size_average=False)
+input = torch.randn(3, 5, requires_grad=True)
+input = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]], requires_grad=True)
+target = torch.randn(3, 5)
+target = torch.tensor([[3.,4.,5.],[6.,7.,8.],[9.,10.,11.]], requires_grad=True)
+print("input", input)
+print("target", target)
+output = loss(input, target)
+print("output", output)
+output.backward()
+print("output after", output)
+

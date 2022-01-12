@@ -271,6 +271,7 @@ class InceptionResNetV2(nn.Module):
             Block35(scale=0.17)
         )
         self.mixed_6a = Mixed_6a()
+        #not used
         self.repeat_1 = nn.Sequential(
             Block17(scale=0.10),
             Block17(scale=0.10),
@@ -293,7 +294,9 @@ class InceptionResNetV2(nn.Module):
             Block17(scale=0.10),
             Block17(scale=0.10)
         )
+        #not used
         self.mixed_7a = Mixed_7a()
+        #not used
         self.repeat_2 = nn.Sequential(
             Block8(scale=0.20),
             Block8(scale=0.20),
@@ -305,7 +308,9 @@ class InceptionResNetV2(nn.Module):
             Block8(scale=0.20),
             Block8(scale=0.20)
         )
+        #not used
         self.block8 = Block8(noReLU=True)
+        #not used
         self.conv2d_7b = BasicConv2d(2080, 1536, kernel_size=1, stride=1)
         self.avgpool_1a = nn.AvgPool2d(8, count_include_pad=False)
         # self.last_linear = nn.Linear(1536, num_classes)
