@@ -89,7 +89,7 @@ def main():
     args.workers = 4
     args.seed = time.time()
     args.print_freq = 1
-    args.dataset_duplicate = 3
+    args.dataset_duplicate = 2
     
     with open(args.train_json, 'r') as outfile:        
         train_list = json.load(outfile)
