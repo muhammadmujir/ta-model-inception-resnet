@@ -39,7 +39,7 @@ class RegTrainer(Trainer):
             raise Exception("gpu is not available")
 
         self.downsample_ratio = args.downsample_ratio
-        self.datasets = {x: Crowd(os.path.join(args.data_dir, '' if x == 'train' else ''),
+        self.datasets = {x: Crowd(os.path.join(args.data_dir, '*.jpg'),
                                   args.crop_size,
                                   args.downsample_ratio,
                                   args.is_gray, x) for x in ['train', 'val']}
