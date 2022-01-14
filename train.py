@@ -111,8 +111,7 @@ def main():
     else:
         criterion = nn.MSELoss(size_average=False).cpu()
         
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
+    optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
     if args.pre:
@@ -137,11 +136,11 @@ def main():
         adjust_learning_rate(optimizer, epoch)
         
         if (epoch == 0):
-            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
-            # resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'w')
+            # resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'w')
+            resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'w')
         else:
-            resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
-            # resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'a')
+            # resultCSV = open('/content/'+BASE_PATH+'result/result.csv', 'a')
+            resultCSV = open(CHECKPOINT_PATH_LOCAL+'result.csv', 'a')
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
         
@@ -172,6 +171,8 @@ def train(train_list, model, criterion, optimizer, epoch):
     losses = AverageMeter()
     batch_time = AverageMeter()
     data_time = AverageMeter()
+    loss_mae = AverageMeter()
+    loss_mse = AverageMeter()
     
     # https://discuss.pytorch.org/t/understanding-transform-normalize/21730/2
     train_loader = torch.utils.data.DataLoader(
@@ -193,18 +194,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         ),
         batch_size=args.batch_size
     )
-    # train_loader = torch.utils.data.DataLoader(
-    #     dataset.listDataset(
-    #         train_list,
-    #         shuffle=True,
-    #         transform=None, 
-    #         train=True, 
-    #         seen=model.seen,
-    #         batch_size=args.batch_size,
-    #         num_workers=args.workers
-    #     ),
-    #     batch_size=args.batch_size
-    # )
+   
     print('epoch %d, processed %d samples, lr %.10f' % (epoch, epoch * len(train_loader.dataset), args.lr))
     
     model.train()
@@ -226,6 +216,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         img = Variable(img)
         output = model(img)
         print("Image-", img_path)
+        print("Image-Size", str(img.size(0)))
         
         # my_tensor = torch.tensor([1,3,4])
         # tensor([1,3,4])
@@ -240,7 +231,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         #         [4]])
         # shape : (3,1) --> 2 Dimension
         
-        if (args.gpu != "-1"):
+        if(args.gpu != "-1"):
             target = target.type(torch.FloatTensor).unsqueeze(0).cuda()
         else:
             target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
@@ -275,10 +266,19 @@ def train(train_list, model, criterion, optimizer, epoch):
         batch_time.update(time.time() - end)
         end = time.time()
         
+        pre_count = torch.sum(output.view(img.size(0), -1), dim=1).detach().cpu().numpy()
+        print("PRE_COUNT",str(pre_count))
+        print("TARGET", str(target))
+        gap = pre_count - target
+        loss_mae.update(np.mean(abs(gap)), img.size(0))
+        loss_mse.update(np.mean(gap * gap), img.size(0))
+        
         if i % args.print_freq == 0:
             resultCSV.write('%s;' % str(img_path))
             resultCSV.write('%s;' % str(losses.val).replace(".", ",",1))
             resultCSV.write('%s;' % str(losses.avg).replace(".", ",",1))
+            resultCSV.write('%s;' % str(loss_mae.val).replace(".", ",",1))
+            resultCSV.write('%s;' % str(loss_mse.val).replace(".", ",",1))
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
@@ -308,6 +308,7 @@ def validate(val_list, model, criterion):
     model.eval()
     
     mae = 0
+    mse = 0
     
     resultCSV.write('\n')
     resultCSV.write('%s;' % "IMAGE_PATH")
@@ -326,22 +327,33 @@ def validate(val_list, model, criterion):
         
         if (args.gpu != "-1"):
             currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+            currentMse = currentMae * currentMae
             resultCSV.write('%s;' % str(currentMae.numpy()).replace(".", ",",1))
             mae += currentMae
+            mse += currentMse
         else:
             currentMae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+            currentMse = currentMae * currentMae
             resultCSV.write('%s;' % str(currentMae.numpy()).replace(".", ",",1))
             mae += currentMae
+            mse += currentMse
         
         resultCSV.write('\n')
         
-    mae = mae/len(test_loader)    
+    mae = mae/len(test_loader)
+    mse = mse/len(test_loader)    
     resultCSV.write('\n')
     resultCSV.write('%s;' % "MAE_AVG")
     resultCSV.write('%s;' % str(mae.numpy()).replace(".", ",",1))
     resultCSV.write('\n')
     print(' * MAE {mae:.3f} '
               .format(mae=mae))
+    resultCSV.write('\n')
+    resultCSV.write('%s;' % "MSE_AVG")
+    resultCSV.write('%s;' % str(mse.numpy()).replace(".", ",",1))
+    resultCSV.write('\n')
+    print(' * MSE {mse:.3f} '
+              .format(mse=mse))
 
     return mae    
         
