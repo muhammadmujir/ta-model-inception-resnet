@@ -10,9 +10,9 @@ args = None
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Test ')
-    parser.add_argument('--data-dir', default='drive/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/test_data_full/images/',
+    parser.add_argument('--data-dir', default='/home/teddy/UCF-Train-Val-Test',
                         help='training data directory')
-    parser.add_argument('--save-dir', default='drive/MyDrive/Projek Akhir/result',
+    parser.add_argument('--save-dir', default='/home/teddy/vgg',
                         help='model directory')
     parser.add_argument('--device', default='0', help='assign device')
     args = parser.parse_args()

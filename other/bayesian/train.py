@@ -6,9 +6,9 @@ args = None
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train ')
-    parser.add_argument('--data-dir', default='drive/MyDrive/Projek Akhir/dataset/ShanghaiTech/part_A/train_data_full/images/',
+    parser.add_argument('--data-dir', default='/home/teddy/UCF-Train-Val-Test',
                         help='training data directory')
-    parser.add_argument('--save-dir', default='drive/MyDrive/Projek Akhir/result',
+    parser.add_argument('--save-dir', default='/home/teddy/vgg',
                         help='directory to save models.')
 
     parser.add_argument('--lr', type=float, default=1e-5,

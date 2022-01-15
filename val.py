@@ -80,18 +80,42 @@ for i in tqdm(range(len(img_paths))):
         mae += abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
 print ("MAE : ",mae/len(img_paths))
 
-
+# ====================================================================
 # prediction on single image
-# from matplotlib import cm as c
-# img = transform(Image.open('C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_B\\test_data\\images\\IMG_1.jpg').convert('RGB')).cpu()
+# ====================================================================
 
-# output = model(img.unsqueeze(0))
-# print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
-# temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
-# plt.imshow(temp,cmap = c.jet)
-# plt.show()
+from matplotlib import cm as c
+from inception_restnet_v2.inceptionresnetv2 import InceptionResNetV2
+
+model = InceptionResNetV2()
+model = model.cpu()
+#loading the trained weights
+checkpoint = torch.load("C:\\Users\\Admin\\Desktop\\data\\TA\\Projek\\Result\\Training_10_epoch_sgd\\0model_best.pth.tar")
+model.load_state_dict(checkpoint['state_dict'])
+
+fileName = "IMG_10"
+img = transform(Image.open('C:\\Users\\Admin\\Desktop\\data\\TA\\Projek\\Dataset\\ShanghaiTech\\part_B\\test_data\\images\\'+fileName+'.jpg').convert('RGB')).cpu()
+gt_file = h5py.File("C:\\Users\\Admin\\Desktop\\data\\TA\\Projek\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground-truth\\"+fileName+".h5",'r')
+groundtruth = np.asarray(gt_file['density'])
+
+output = model(img.unsqueeze(0))
+print("Original Count : ", int(np.sum(groundtruth)))
+print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
+temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
+#plt.imshow(groundtruth, cmap = c.jet)
+plt.imshow(temp,cmap = c.jet)
+plt.show()
 
 
+# ====================================================================
+# print model's parameter
+# ====================================================================
+
+for name, param in model.named_parameters():
+    if param.requires_grad:
+        print("param name: ", name)
+        print("param value: ", param)
+        
 
 # temp = h5py.File('part_A/test_data/ground-truth/IMG_100.h5', 'r')
 # temp_1 = np.asarray(temp['density'])

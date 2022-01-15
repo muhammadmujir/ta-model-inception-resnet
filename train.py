@@ -171,8 +171,8 @@ def train(train_list, model, criterion, optimizer, epoch):
     losses = AverageMeter()
     batch_time = AverageMeter()
     data_time = AverageMeter()
-    loss_mae = AverageMeter()
-    loss_mse = AverageMeter()
+    # loss_mae = AverageMeter()
+    # loss_mse = AverageMeter()
     
     # https://discuss.pytorch.org/t/understanding-transform-normalize/21730/2
     train_loader = torch.utils.data.DataLoader(
@@ -266,19 +266,19 @@ def train(train_list, model, criterion, optimizer, epoch):
         batch_time.update(time.time() - end)
         end = time.time()
         
-        pre_count = torch.sum(output.view(img.size(0), -1), dim=1).detach().cpu().numpy()
-        print("PRE_COUNT",str(pre_count))
-        print("TARGET", str(target))
-        gap = pre_count - target
-        loss_mae.update(np.mean(abs(gap)), img.size(0))
-        loss_mse.update(np.mean(gap * gap), img.size(0))
+        # pre_count = torch.sum(output.view(img.size(0), -1), dim=1).detach().cpu().numpy()
+        # print("PRE_COUNT",str(pre_count))
+        # print("TARGET", str(target))
+        # gap = pre_count - target
+        # loss_mae.update(np.mean(abs(gap)), img.size(0))
+        # loss_mse.update(np.mean(gap * gap), img.size(0))
         
         if i % args.print_freq == 0:
             resultCSV.write('%s;' % str(img_path))
             resultCSV.write('%s;' % str(losses.val).replace(".", ",",1))
             resultCSV.write('%s;' % str(losses.avg).replace(".", ",",1))
-            resultCSV.write('%s;' % str(loss_mae.val).replace(".", ",",1))
-            resultCSV.write('%s;' % str(loss_mse.val).replace(".", ",",1))
+            # resultCSV.write('%s;' % str(loss_mae.val).replace(".", ",",1))
+            # resultCSV.write('%s;' % str(loss_mse.val).replace(".", ",",1))
             print('Epoch: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
