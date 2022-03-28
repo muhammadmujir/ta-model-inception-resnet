@@ -34,7 +34,7 @@ def gaussian_filter_density(gt):
     
     # gt[i][0] -> Width -> column in matrix
     # gt[i][1] -> Height -> row in matrix
-    pts = np.array(list(zip(np.nonzero(gt)[1], np.nonzero(gt)[0])))
+    pts = np.array(list(zip(np.nonzero(gt)[0], np.nonzero(gt)[1])))
     
     # x = np.array([[3, 0, 0], [0, 4, 0], [5, 6, 0]])
     # array([[3, 0, 0],
@@ -67,7 +67,7 @@ def gaussian_filter_density(gt):
         
         print("iterasi-",str(i))
         pt2d = np.zeros(gt.shape, dtype=np.float32)
-        pt2d[pt[1],pt[0]] = 1.
+        pt2d[pt[0],pt[1]] = 1.
         # print(pt[0], " :: ", pt[1])
         
         if gt_count > 1:
@@ -128,11 +128,13 @@ for img_path in img_paths:
     # mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth').replace('IMG_','GT_IMG_'))
     mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth'))
     img= plt.imread(img_path)
+    # np.zeros((row, column))
     k = np.zeros((img.shape[0],img.shape[1]))
     # gt = mat["image_info"][0,0][0,0][0]
     gt = mat["annPoints"]
     # img.shape[0] -> height/row
     # img.shape[1] -> width/column
+    # ground-truth annotation -> [[width atau column, height atau row],[width atau column, height atau row]]
     print(img.shape[0]," :: ",img.shape[1])
     # print("GT ", mat)
     #print("==========================================")
@@ -140,7 +142,7 @@ for img_path in img_paths:
     totalPoint = 0;
     if (len(gt) <= 1000):
         for i in range(0,len(gt)):
-            if int(gt[i][1])<img.shape[0] and int(gt[i][0])<img.shape[1]:
+            if int(gt[i][0])<img.shape[1] and int(gt[i][1])<img.shape[0]:
                 
                 # gt[i][0] -> Width -> column in matrix
                 # gt[i][1] -> Height -> row in matrix
@@ -194,12 +196,27 @@ def countCrowd():
 
 # Analyzing
 
-# img_path = img_paths[0]
+import sys
+import numpy
+numpy.set_printoptions(threshold=sys.maxsize)
+
+img_path = "C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\"
 # print (img_path)
 # mat = io.loadmat(img_path.replace('.jpg','.mat').replace('images','ground-truth').replace('IMG_','GT_IMG_'))
-# img= plt.imread(img_path)
+mat = io.loadmat(img_path.replace('images','ground-truth')+"img_0004_ann.mat")
+img = plt.imread(img_path+"img_0004.jpg")
+# print("Image shape: "+str(img.shape))
 # k = np.zeros((img.shape[0],img.shape[1]))
 # gt = mat["image_info"][0,0][0,0][0]
+# print(mat['annPoints'])
+np_array = numpy.array(mat['annPoints'])
+print(numpy.amax(np_array, axis=0))
+# save array into file
+# new_array = numpy.array(mat)
+# with open("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\img_0004_ann.txt", "w+") as f:
+#   data = f.read()
+#   f.write(str(new_array))
+  
 # for i in range(0,len(gt)):
 #     if int(gt[i][1])<img.shape[0] and int(gt[i][0])<img.shape[1]:
 #         k[int(gt[i][1]),int(gt[i][0])]=1
@@ -209,3 +226,33 @@ def countCrowd():
 # print("after : ", k)
 # with h5py.File(img_path.replace('.jpg','.h5').replace('images','ground-truth'), 'w') as hf:
 #         hf['density'] = k
+
+# Try KdTree
+import numpy as np
+from scipy.spatial import KDTree
+x, y = np.mgrid[0:5, 2:8]
+print(x)
+print("=================")
+print(y)
+print("=================")
+tree = KDTree(np.c_[x.ravel(), y.ravel()])
+print(x.ravel())
+print("=================")
+print(y.ravel())
+print("=================")
+print(np.c_[x.ravel(), y.ravel()])
+print("=================")
+dd, ii = tree.query([[0, 0], [2.2, 2.9]], k=1)
+print(dd)
+print("=================")
+print(ii)
+print("=================")
+# print(dd, ii, sep='\n')
+# [0,0] -> indeks nearest neigbor = 0 -> (0,2) -> ((0-0)^2 + (0-2)^2)^-2 = (4)^-2 = 2
+# [2.2,2.9] -> indeks nearest neigbor = 13 -> (2,3) -> ((2.2-2)^2 + (2.9-3)^2)^-2 = (0.05)^-2 = 0.223
+
+a = [1,2,3]
+b = [1,2,3]
+axes = [0,1]
+axes = [(a[ii], b[ii]) for ii in range(len(axes)) if a[ii] > 0]
+print(axes)

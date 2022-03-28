@@ -84,3 +84,131 @@ print("output", output)
 output.backward()
 print("output after", output)
 
+
+import numpy as np
+input = np.array([[0,0,0]])
+output = np.array([[0,0,0]])
+output = input
+print(np.arange(-1.5,4.5))
+print(np.exp(-16 / 4 * np.array([2,2,2]) ** 2))
+print(-16 / 4 * 2 ** 2)
+print(np.array([1,2,3])[::-1])
+
+# Gaussian Filter
+import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+import scipy
+import scipy.spatial
+def gaussian_filter_density(gt):
+    print (gt.shape)
+    density = np.zeros(gt.shape, dtype=np.float32)
+    gt_count = np.count_nonzero(gt)
+    if gt_count == 0:
+        return density
+    
+    pts = np.array(list(zip(np.nonzero(gt)[0], np.nonzero(gt)[1])))
+    print("===========Index Of Non Zero Element==============")
+    print(pts)
+    print("==============================")
+    # x = np.array([[3, 0, 0], [0, 4, 0], [5, 6, 0]])
+    # array([[3, 0, 0],
+    #        [0, 4, 0],
+    #        [5, 6, 0]])
+    # np.nonzero(x)
+    # (array([0, 1, 2, 2]), array([0, 1, 0, 1])) --> index of non zero elemen
+    
+    
+    
+    # a = ("John", "Charles", "Mike")
+    # b = ("Jenny", "Christy", "Monica")
+    # x = zip(a, b)
+    # print(list(x))
+    # Output:
+    # [('John', 'Jenny'), ('Charles', 'Christy'), ('Mike', 'Monica')]
+    
+    
+    leafsize = 2048
+    # build kdtree
+    tree = scipy.spatial.KDTree(pts.copy(), leafsize=leafsize)
+    # query kdtree
+    # Query the kd-tree for nearest neighbors
+    # k=4 -> for each point of pts, will be searched the 4 nearest neighbors
+    distances, locations = tree.query(pts, k=4)
+    print("===========Distance KNN==============")
+    print(distances)
+    print("===========Index Of Neighbor==============")
+    print(locations)
+    print ('generate density...')
+    print("++++++++++++++++++++++++++++++++")
+    for i, pt in enumerate(pts):
+        
+        print("iterasi-",str(i))
+        pt2d = np.zeros(gt.shape, dtype=np.float32)
+        pt2d[pt[0],pt[1]] = 1.
+        if (i < 2):
+            print("===========PT2D==============")
+            print(pt2d)
+        
+        if gt_count > 1:
+            # distance ke-0 tidak diikutkan karena menunjuk ke titik itu sendiri
+            # (jarak terpendek adalah dirinya sendiri)
+            sigma = (distances[i][1]+distances[i][2]+distances[i][3])*0.1
+            if (i < 2):
+                print("===========SIGMA==============")
+                print(sigma)
+            
+        else:
+            sigma = np.average(np.array(gt.shape))/2./2. #case: 1 point
+            # np.array([3.,2])
+            # np.average(np.array([3.,2])) -> Output : 2.5
+           
+        # np.array([1,2,3,4])+np.array([1,2,3,4])
+        # array([2, 4, 6, 8])
+        res = scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+        print("===========Density==============")
+        print(res)
+        density += res
+    
+    print("++++++++++++++++++++++++++++++++")
+    print ('done.')
+    return density
+
+gt = np.array([[1,0,0,0], [1,1,0,0], [0,1,1,0], [1,0,0,1]])
+print(gaussian_filter_density(gt))
+# import inspect
+# print("===========SOURCE============")
+# print(inspect.getsource(gaussian_filter))
+
+# https://scipy.github.io/devdocs/tutorial/ndimage.html
+from scipy.ndimage import correlate1d
+a = [0, 0, 0, 1, 0, 0, 0]
+correlate1d(a, [1])
+correlate1d(a, [1, 1])
+correlate1d(a, [1, 1, 1])
+correlate1d(a, [1, 1, 1, 1])
+correlate1d(a, [1, 1, 1, 1, 1])
+correlate1d(a, [1, 1, 1, 1, 1, 1, 1])
+correlate1d(a, [0, 0, 0, 1, 0, 0, 0])
+
+a = [0, 0, 1, 1, 1, 0, 0]
+correlate1d(a, [-1, 1], origin = -1)  # forward difference
+correlate1d(a, [0, -1, 1]) # forward difference
+
+# cara kerja correlate1d
+# 1. array input akan diappend depan belakang dengan ukuran append sama dengan 
+# panjang input array
+# contoh :
+# input = [1,0,0,1,0,0,1]
+# di append menjadi input = [0,0,0,0,0,0,0|input|0,0,0,0,0,0,0]
+# 2. input akan dikonvolusi dengan weight dengan stride 1,
+# Penempatan hasil konvolusi:
+# a. jika panjang array weight ganjil, maka hasil konvolusi akan ditempatkan 
+#    di input pada indeks yang berada tepat di tengah weight
+# b. jika panjang array weight genap, maka hasil konvolusi akan ditempatkan 
+#    di input pada indeks yang berada di posisi int(panjang wieght / 2) + 1
+#    dari weight
+# c. penempatan hasil konvolusi dapat diubah dengan memasukkan parameter
+#    origin yang relative terhadap poisisi tengah dari weight
+#    contoh correlate1d(a, [-1, 1, 0], origin = -1) -> penempatan hasil 
+#           convolusi diletakkan pada indkes wieght ke -> 
+#           center of weight - 1 = 1 - 1 = 0
