@@ -297,7 +297,7 @@ def gaussian_filter(input, sigma, nonZeroIndex=None, order=0, output=None,
         i = 0
         for axis, sigma, order, mode in axes:
             if (i == 0):
-                newInput = np.take(input, [nonZeroIndex[0][0]], axis=1)
+                newInput = np.take(input, [nonZeroIndex[0][1]], axis=1)
                 result = gaussian_filter1d(newInput, sigma, axis, order, None,
                                   mode, cval, truncate)
                 nonZeroIndexOfResult = list(zip(np.nonzero(result)[0], 
@@ -313,7 +313,7 @@ def gaussian_filter(input, sigma, nonZeroIndex=None, order=0, output=None,
                                   mode, cval, truncate)
             # print("=======OUTPUT RES======")
             # print(output)
-            input = output
+            # input = output
             i = i + 1
     else:
         output[...] = input[...]

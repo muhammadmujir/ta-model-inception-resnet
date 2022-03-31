@@ -163,15 +163,47 @@ def create_ground_truth(path_sets):
                 hf['density'] = k
 
 
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 # print(img_paths[8])
 def countCrowd():
     gt_file = h5py.File(img_paths[0].replace('.jpg','.h5').replace('images','ground-truth'),'r')
     groundtruth = np.asarray(gt_file['density'])
     print(np.sum(groundtruth))
 
+def isArrayEqual(path_sets):
+    img_paths = []
+    
+    for path in path_sets:
+        for img_path in glob.glob(os.path.join(path, '*.h5')):
+            img_paths.append(img_path)
+    
+    print(img_paths)
+    groundtruth = []
+    for i, pth in enumerate(img_paths):
+        gt_file = h5py.File(pth,'r')
+        groundtruth.append(gt_file['density'])
+        
+    groundtruth = np.array(groundtruth)
+    # print(groundtruth[0][932][913], "::", groundtruth[1][932][913])
+    # print(groundtruth[0][932][914], "::", groundtruth[1][932][914])
+    groundtruth = groundtruth[0] - groundtruth[1]
+    print(np.nonzero(groundtruth))
+    print("shape: ",groundtruth.shape)
+    return np.nonzero(groundtruth)[0].shape[0] == 0
+    
+# Compare Array
+paths = ["C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\"]
+print(isArrayEqual(paths))
 
+# Try Gaussian Filter
+paths = ["C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\images"]
+create_ground_truth(paths)
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 
 ###################################
@@ -230,10 +262,6 @@ print(numpy.amax(np_array, axis=0))
 # print("after : ", k)
 # with h5py.File(img_path.replace('.jpg','.h5').replace('images','ground-truth'), 'w') as hf:
 #         hf['density'] = k
-
-# Try Gaussian Filter
-paths = ["C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\images"]
-create_ground_truth(paths)
 
 # Try KdTree
 import numpy as np
