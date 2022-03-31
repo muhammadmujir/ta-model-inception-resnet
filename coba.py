@@ -167,13 +167,21 @@ def gaussian_filter_density(gt):
         res = scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
         print("===========Density==============")
         print(res)
+        with open("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\density.txt", "w+") as f:
+          data = f.read()
+          f.write(str(res))
+        break
         density += res
     
     print("++++++++++++++++++++++++++++++++")
     print ('done.')
     return density
 
-gt = np.array([[1,0,0,0], [1,1,0,0], [0,1,1,0], [1,0,0,1]])
+gt = np.array([
+    [1,0,0,0,0,0,0], 
+    [1,1,0,0,0,0,0], 
+    [0,1,1,0,0,0,0], 
+    [1,0,0,1,0,0,0]])
 print(gaussian_filter_density(gt))
 # import inspect
 # print("===========SOURCE============")
@@ -193,6 +201,10 @@ correlate1d(a, [0, 0, 0, 1, 0, 0, 0])
 a = [0, 0, 1, 1, 1, 0, 0]
 correlate1d(a, [-1, 1], origin = -1)  # forward difference
 correlate1d(a, [0, -1, 1]) # forward difference
+
+from scipy.ndimage import correlate1d
+a = [[0, 0, 0, 1, 0, 0, 0],[0, 0, 0, 2, 0, 0, 0],[0, 0, 0, 1, 0, 0, 0]]
+correlate1d(a, [1,1,1,1], axis=0, mode='constant')
 
 # cara kerja correlate1d
 # 1. array input akan diappend depan belakang dengan ukuran append sama dengan 
