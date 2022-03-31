@@ -14,7 +14,8 @@ import numpy as np
 import os
 import glob
 from matplotlib import pyplot as plt
-from scipy.ndimage.filters import gaussian_filter
+# from scipy.ndimage.filters import gaussian_filter
+from custome_filter import gaussian_filter
 import scipy
 import scipy.spatial
 import json
@@ -81,7 +82,8 @@ def gaussian_filter_density(gt):
            
         # np.array([1,2,3,4])+np.array([1,2,3,4])
         # array([2, 4, 6, 8])
-        density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+        # density += gaussian_filter(pt2d, sigma, mode='constant')
+        density += gaussian_filter(pt2d, sigma, nonZeroIndex=list([pt]), mode='constant')
     
     print("++++++++++++++++++++++++++++++++")
     print ('done.')
@@ -114,33 +116,35 @@ path_sets = [path_train]
 # path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
 # path_sets = [path1]
 
-img_paths = []
-for path in path_sets:
-    for img_path in range(830,831):
-        img_paths.append(path+"\\img_0"+str(img_path)+".jpg")
-
-# for path in path_sets:
-#     for img_path in glob.glob(os.path.join(path, '*.jpg')):
-#         img_paths.append(img_path)
-
-for img_path in img_paths:
-    print (img_path)
-    # mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth').replace('IMG_','GT_IMG_'))
-    mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth'))
-    img= plt.imread(img_path)
-    # np.zeros((row, column))
-    k = np.zeros((img.shape[0],img.shape[1]))
-    # gt = mat["image_info"][0,0][0,0][0]
-    gt = mat["annPoints"]
-    # img.shape[0] -> height/row
-    # img.shape[1] -> width/column
-    # ground-truth annotation -> [[width atau column, height atau row],[width atau column, height atau row]]
-    print(img.shape[0]," :: ",img.shape[1])
-    # print("GT ", mat)
-    #print("==========================================")
-    pointCount = 0;
-    totalPoint = 0;
-    if (len(gt) <= 1000):
+def create_ground_truth(path_sets):
+    img_paths = []
+    
+    # for path in path_sets:
+    #     for img_path in range(830,831):
+    #         img_paths.append(path+"\\img_0"+str(img_path)+".jpg")
+    
+    for path in path_sets:
+        for img_path in glob.glob(os.path.join(path, '*.jpg')):
+            img_paths.append(img_path)
+    
+    for img_path in img_paths:
+        print (img_path)
+        # mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth').replace('IMG_','GT_IMG_'))
+        mat = io.loadmat(img_path.replace('.jpg','_ann.mat').replace('images','ground-truth'))
+        img = plt.imread(img_path)
+        # np.zeros((row, column))
+        k = np.zeros((img.shape[0],img.shape[1]))
+        # gt = mat["image_info"][0,0][0,0][0]
+        gt = mat["annPoints"]
+        # img.shape[0] -> height/row
+        # img.shape[1] -> width/column
+        # ground-truth annotation -> [[width atau column, height atau row],[width atau column, height atau row]]
+        print(img.shape[0]," :: ",img.shape[1])
+        # print("GT ", mat)
+        #print("==========================================")
+        # pointCount = 0;
+        # totalPoint = 0;
+        
         for i in range(0,len(gt)):
             if int(gt[i][0])<img.shape[1] and int(gt[i][1])<img.shape[0]:
                 
@@ -149,8 +153,8 @@ for img_path in img_paths:
                 k[int(gt[i][1]),int(gt[i][0])]=1
                 
                 # print(gt[i][0], " :: ", gt[i][1])
-                pointCount = pointCount+1
-            totalPoint = totalPoint+1
+                # pointCount = pointCount+1
+            # totalPoint = totalPoint+1
         #print("Total Point: ", totalPoint)
         #print("POINT COUNT: ", pointCount)
         #print("==========================================")
@@ -226,6 +230,10 @@ print(numpy.amax(np_array, axis=0))
 # print("after : ", k)
 # with h5py.File(img_path.replace('.jpg','.h5').replace('images','ground-truth'), 'w') as hf:
 #         hf['density'] = k
+
+# Try Gaussian Filter
+paths = ["C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\images"]
+create_ground_truth(paths)
 
 # Try KdTree
 import numpy as np

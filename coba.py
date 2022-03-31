@@ -168,10 +168,10 @@ def gaussian_filter_density(gt):
         res = gaussian_filter(pt2d, sigma, mode='constant')
         print("===========Density==============")
         print(res)
-        with open("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\density.txt", "w+") as f:
-          data = f.read()
-          f.write(str(res))
-        break
+        # with open("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\density.txt", "w+") as f:
+        #   data = f.read()
+        #   f.write(str(res))
+        # break
         density += res
     
     print("++++++++++++++++++++++++++++++++")

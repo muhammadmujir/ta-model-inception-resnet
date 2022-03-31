@@ -70,7 +70,7 @@ def correlate1d(input, weights, axis=-1, output=None, mode="reflect",
     complex_weights = weights.dtype.kind == 'c'
     if complex_input or complex_weights:
         if complex_weights:
-            print("==========Complex Weight============")
+            # print("==========Complex Weight============")
             weights = weights.conj()
             weights = weights.astype(np.complex128, copy=False)
         kwargs = dict(axis=axis, mode=mode, origin=origin)
@@ -108,11 +108,11 @@ def _gaussian_kernel1d(sigma, order, radius):
     exponent_range = np.arange(order + 1)
     # exponent_range = [0]
     sigma2 = sigma * sigma
-    print("========RADIUS==========")
-    print(radius)
+    # # print("========RADIUS==========")
+    # print(radius)
     x = np.arange(-radius, radius+1)
-    print("========RADIUS RANGE===========")
-    print(x)
+    # print("========RADIUS RANGE===========")
+    # print(x)
     phi_x = np.exp(-0.5 / sigma2 * x ** 2)
     # phi_x = [exp(x[0]), exp(x[1]), exp(x[2])]
     # np.exp(x) -> e^x -> e = 2.718281 -> value is always positive -> ex : 2^-2 = 1/(2^2) = 1/4
@@ -188,8 +188,8 @@ def gaussian_filter1d(input, sigma, axis=-1, order=0, output=None,
     # lw = int(4.0 * sd + 0.5)
     # Since we are calling correlate, not convolve, revert the kernel
     weights = _gaussian_kernel1d(sigma, order, lw)[::-1]
-    print("=======WEIGHT=========")
-    print(weights)
+    # print("=======WEIGHT=========")
+    # print(weights)
     # [::-1] means revert kernel -> ex: np.array([1,2,3])[:-1] -> array([3,2,1])
     return correlate1d(input, weights, axis, output, mode, cval, 0)
 
@@ -265,28 +265,28 @@ def gaussian_filter(input, sigma, nonZeroIndex=None, order=0, output=None,
         nonZeroIndex = list(zip(np.nonzero(input)[0], np.nonzero(input)[1]))
     output = _ni_support._get_output(output, input)
     # output will be np.zeros(input.shape)
-    print("=======OUPUT======")
-    print(output)
+    # print("=======OUPUT======")
+    # print(output)
     orders = _ni_support._normalize_sequence(order, input.ndim)
     # _normalize_sequence(0, 2) --> [0,0]
     # input.ndim --> dimension of input, ex : np.array([[1,2,3]]) -> 2
     # order determines the formula of gaussian used
     # 0 -> using base gaussian formula
     # 1 -> using derivatives 1 of gaussian
-    print("=======ORDERS======")
-    print(orders)
+    # print("=======ORDERS======")
+    # print(orders)
     sigmas = _ni_support._normalize_sequence(sigma, input.ndim)
     # sigmas --> [sigma, sigma]
-    print("=======SIGMA======")
-    print(sigmas)
+    # print("=======SIGMA======")
+    # print(sigmas)
     modes = _ni_support._normalize_sequence(mode, input.ndim)
     # modes --> ['constant', 'constant']
-    print("=======MODES======")
-    print(modes)
+    # print("=======MODES======")
+    # print(modes)
     axes = list(range(input.ndim))
     # axes = [0,1]
-    print("=======AXIS======")
-    print(axes)
+    # print("=======AXIS======")
+    # print(axes)
     axes = [(axes[ii], sigmas[ii], orders[ii], modes[ii])
             for ii in range(len(axes)) if sigmas[ii] > 1e-15]
     # axes = [(0, sigma, order, mode), (1, sigma, order, mode)]
@@ -311,8 +311,8 @@ def gaussian_filter(input, sigma, nonZeroIndex=None, order=0, output=None,
                     k = k + 1
                 result = gaussian_filter1d(newInput, sigma, axis, order, None,
                                   mode, cval, truncate)
-            print("=======OUTPUT RES======")
-            print(output)
+            # print("=======OUTPUT RES======")
+            # print(output)
             input = output
             i = i + 1
     else:
