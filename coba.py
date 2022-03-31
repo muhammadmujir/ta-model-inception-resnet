@@ -97,6 +97,7 @@ print(np.array([1,2,3])[::-1])
 # Gaussian Filter
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
+#from custome_filter import gaussian_filter
 import scipy
 import scipy.spatial
 def gaussian_filter_density(gt):
@@ -164,7 +165,7 @@ def gaussian_filter_density(gt):
            
         # np.array([1,2,3,4])+np.array([1,2,3,4])
         # array([2, 4, 6, 8])
-        res = scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+        res = gaussian_filter(pt2d, sigma, mode='constant')
         print("===========Density==============")
         print(res)
         with open("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\debug\\density.txt", "w+") as f:
@@ -178,10 +179,10 @@ def gaussian_filter_density(gt):
     return density
 
 gt = np.array([
-    [1,0,0,0,0,0,0], 
-    [1,1,0,0,0,0,0], 
-    [0,1,1,0,0,0,0], 
-    [1,0,0,1,0,0,0]])
+    [0,0,0,0,0,0,0], 
+    [0,0,0,0,0,0,0], 
+    [0,0,1,0,0,0,0], 
+    [0,0,0,0,0,0,0]])
 print(gaussian_filter_density(gt))
 # import inspect
 # print("===========SOURCE============")
