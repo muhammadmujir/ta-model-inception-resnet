@@ -27,7 +27,7 @@ from tqdm import tqdm
 
 # function to create density maps for images
 def gaussian_filter_density(gt):
-    print (gt.shape)
+    # print (gt.shape)
     density = np.zeros(gt.shape, dtype=np.float32)
     gt_count = np.count_nonzero(gt)
     if gt_count == 0:
@@ -66,7 +66,7 @@ def gaussian_filter_density(gt):
     print("++++++++++++++++++++++++++++++++")
     for i, pt in enumerate(pts):
         
-        print("iterasi-",str(i))
+        # print("iterasi-",str(i))
         pt2d = np.zeros(gt.shape, dtype=np.float32)
         pt2d[pt[0],pt[1]] = 1.
         # print(pt[0], " :: ", pt[1])
@@ -107,11 +107,11 @@ def gaussian_filter_density(gt):
 # path_sets = [part_B_test]
 
 #local UCF-QNRF
-root = 'C:\\Users\\Admin\\Desktop\\data\\TA\\Dataset\\UCF-QNRF_ECCV18\\'
+root = 'C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\'
 path_train = os.path.join(root,'Train','images')
 path_test = os.path.join(root,'Test','images')
 #path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
-path_sets = [path_train]
+path_sets = [path_test]
 
 # path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
 # path_sets = [path1]
@@ -139,7 +139,7 @@ def create_ground_truth(path_sets):
         # img.shape[0] -> height/row
         # img.shape[1] -> width/column
         # ground-truth annotation -> [[width atau column, height atau row],[width atau column, height atau row]]
-        print(img.shape[0]," :: ",img.shape[1])
+        # print(img.shape[0]," :: ",img.shape[1])
         # print("GT ", mat)
         #print("==========================================")
         # pointCount = 0;
@@ -165,6 +165,9 @@ def create_ground_truth(path_sets):
 
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# Create Ground Truth
+create_ground_truth(path_sets)
 
 
 # print(img_paths[8])
