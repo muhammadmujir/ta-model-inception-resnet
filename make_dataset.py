@@ -111,7 +111,7 @@ root = 'C:\\Users\\Admin\\Desktop\\TA\\Dataset\\UCF-QNRF_ECCV18\\'
 path_train = os.path.join(root,'Train','images')
 path_test = os.path.join(root,'Test','images')
 #path_sets = [part_A_train,part_A_test,part_B_train,part_B_test]
-path_sets = [path_test]
+path_sets = [path_train]
 
 # path1 = "C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_A\\train_data\\images\\IMG_21.jpg"
 # path_sets = [path1]
@@ -295,3 +295,7 @@ b = [1,2,3]
 axes = [0,1]
 axes = [(a[ii], b[ii]) for ii in range(len(axes)) if a[ii] > 0]
 print(axes)
+
+mat = io.loadmat("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\mall_dataset\\mall_gt.mat")
+print(len(mat['roi'][0][0][0][0]))
+print(mat)

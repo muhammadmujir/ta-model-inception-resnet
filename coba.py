@@ -72,11 +72,11 @@ for i in range(len(conv)):
 import torch
 import torch.nn as nn
 
-loss = nn.MSELoss(size_average=False)
+loss = nn.L1Loss(size_average=False)
 input = torch.randn(3, 5, requires_grad=True)
-input = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]], requires_grad=True)
+input = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]])
 target = torch.randn(3, 5)
-target = torch.tensor([[3.,4.,5.],[6.,7.,8.],[9.,10.,11.]], requires_grad=True)
+target = torch.tensor([[3.,4.,5.],[6.,7.,8.],[9.,10.,11.]])
 print("input", input)
 print("target", target)
 output = loss(input, target)
@@ -84,6 +84,23 @@ print("output", output)
 output.backward()
 print("output after", output)
 
+print(input.sum())
+print(target.sum())
+print(abs(input.sum() - target.sum()))
+
+target = torch.load("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\Result\\target.pt")
+output = torch.load("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\Result\\output.pt")
+target = torch.tensor([[0.1402,4.,5.],[6.,7.,8.],[9.,10.,11.]], requires_grad=True)
+output = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]])
+criterion = nn.L1Loss(reduction='sum').cpu().type(torch.FloatTensor)
+loss = criterion(output, target)
+print(abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu()))
+print("Criterion: ", loss)
+loss.backward()
+print("Output: ", output.data.sum())
+print("Target: ", target.sum().type(torch.FloatTensor).cpu())
+# torch.set_printoptions(profile='full')
+# print("Output: ", output)
 
 import numpy as np
 input = np.array([[0,0,0]])
