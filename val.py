@@ -93,13 +93,17 @@ print ("MAE : ",mae/len(img_paths))
 
 
 
-mat = io.loadmat("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth\\GT_IMG_281.mat")
+mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
 print("Ground Truth Count", len(mat['image_info'][0][0][0][0][0]))
-temp = h5py.File('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth\\IMG_281.h5', 'r')
+temp = h5py.File('D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth-h5\\IMG_281.h5', 'r')
 temp_1 = np.asarray(temp['density'])
+temp2 = h5py.File('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth\\IMG_281.h5', 'r')
+temp_2 = np.asarray(temp2['density'])
+isSame = temp_1 - temp_2
+print(len(np.nonzero(isSame)[0]) == 0)
 plt.imshow(temp_1,cmap = CM.jet)
 print("After Gaussian Count : ",int(np.sum(temp_1)))
-print(len(np.nonzero(temp_1)[2]))
+print(len(np.nonzero(temp_1)[1]))
 plt.show()
 print("Original Image")
 plt.imshow(plt.imread('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\images\\IMG_281.jpg'))
