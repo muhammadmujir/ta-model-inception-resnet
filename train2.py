@@ -19,6 +19,7 @@ import dataset
 import time
 import glob
 import os
+from dataloader import DataLoader
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -146,7 +147,8 @@ def train(train_list, model, criterion, optimizer, epoch):
     print(str(epoch))
     resultCSV.write('%s;' % "Epoch: {}".format(epoch))
     
-    train_loader = torch.utils.data.DataLoader(
+    # original DataLoader: torch.utils.data.DataLoader()
+    train_loader = DataLoader(
         dataset.listDataset(train_list,
                        shuffle=True,
                        transform=transforms.Compose([
@@ -205,7 +207,8 @@ def validate(val_list, model, criterion):
     global resultCSV, resultPath
     
     print ('begin test')
-    test_loader = torch.utils.data.DataLoader(
+    # original DataLoader: torch.utils.data.DataLoader()
+    test_loader = DataLoader(
     dataset.listDataset(val_list,
                    shuffle=False,
                    transform=transforms.Compose([
