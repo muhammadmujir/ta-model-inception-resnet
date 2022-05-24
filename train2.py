@@ -43,6 +43,8 @@ parser.add_argument('batch_size',metavar='BATCH_SIZE', type=int,
                     help='batch size')
 parser.add_argument('worker_count',metavar='WORKER_COUNT', type=int,
                     help='worker count')
+parser.add_argument('epoch_count',metavar='EPOCH_COUNT', type=int,
+                    help='epoch count')
 
 resultCSV = None
 resultPath = None
@@ -62,7 +64,7 @@ def main():
     args.decay         = 5*1e-4
     args.start_epoch   = 0
     # args.epochs = 400
-    args.epochs = 40
+    args.epochs = args.epoch_count
     args.steps         = [-1,1,100,150]
     args.scales        = [1,1,1,1]
     # args.workers = 4
