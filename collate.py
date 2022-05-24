@@ -57,7 +57,7 @@ def default_collate(batch):
             out = elem.new(storage)
         # print("Batch: ", batch[0].shape)
         # return torch.stack(batch, 0, out=out)
-        return torch.stack(batch, 0)
+        return torch.tensor(batch[0].unsqueeze(0))
     elif elem_type.__module__ == 'numpy' and elem_type.__name__ != 'str_' \
             and elem_type.__name__ != 'string_':
         if elem_type.__name__ == 'ndarray' or elem_type.__name__ == 'memmap':
