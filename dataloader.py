@@ -21,6 +21,7 @@ from torch._six import string_classes
 from torch.utils.data.dataset import IterableDataset, Dataset
 from torch.utils.data.sampler import Sampler, SequentialSampler, RandomSampler, BatchSampler
 from torch.utils.data import _utils
+from collate import default_collate as df_collate
 
 T_co = TypeVar('T_co', covariant=True)
 T = TypeVar('T')
@@ -163,7 +164,7 @@ class DataLoader(Generic[T_co]):
     def __init__(self, dataset: Dataset[T_co], batch_size: Optional[int] = 1,
                  shuffle: bool = False, sampler: Optional[Sampler] = None,
                  batch_sampler: Optional[Sampler[Sequence]] = None,
-                 num_workers: int = 0, collate_fn: Optional[_collate_fn_t] = None,
+                 num_workers: int = 0, collate_fn: Optional[_collate_fn_t] = df_collate,
                  pin_memory: bool = False, drop_last: bool = False,
                  timeout: float = 0, worker_init_fn: Optional[_worker_init_fn_t] = None,
                  multiprocessing_context=None, generator=None,
