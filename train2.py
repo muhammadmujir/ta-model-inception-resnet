@@ -20,6 +20,7 @@ import time
 import glob
 import os
 from dataloader import DataLoader
+import math
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -87,10 +88,10 @@ def main():
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
-        criterion = nn.MSELoss(size_average=False).cuda()
+        criterion = nn.L1Loss(size_average=False).cuda()
     else:
         model = model.cpu()
-        criterion = nn.MSELoss(size_average=False).cpu()
+        criterion = nn.L1Loss(size_average=False).cpu()
     
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -118,8 +119,10 @@ def main():
                 resultCSV.write('%s;' % "Training Loss (MSE)")
             else:
                 resultCSV.write('%s;' % "Training Loss (MAE)")
-            resultCSV.write('%s;' % "Testing MAE")
-            resultCSV.write('%s;' % "Testing MSE")
+            resultCSV.write('%s;' % "Testing MAE BY PIXEL")
+            resultCSV.write('%s;' % "Testing MSE BY PIXEL")
+            resultCSV.write('%s;' % "Testing MAE BY COUNT")
+            resultCSV.write('%s;' % "Testing MSE BY COUNT")
             resultCSV.write('\n')
         else:
             resultCSV = open(os.path.join(resultPath, 'result.csv'), 'a')
@@ -227,6 +230,8 @@ def validate(val_list, model, criterion):
     mseCriterion = nn.MSELoss(size_average=False).cuda() if args.gpu != 'None' else nn.MSELoss(size_average=False).cpu()
     maeLoss = AverageMeter()
     mseLoss = AverageMeter()
+    maeLossByCount = AverageMeter()
+    mseLossByCount = AverageMeter()
     
     for i,(img, target, path) in enumerate(test_loader):
         if args.gpu != 'None':
@@ -242,21 +247,25 @@ def validate(val_list, model, criterion):
             target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
         target = Variable(target)
         
-        # if args.gpu != 'None':
-        #     mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
-        # else:
-        #     mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+        if args.gpu != 'None':
+            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+        else:
+            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
         
+        maeLossByCount.update(mae)
+        mseLossByCount.update(mae*mae)
         maeLoss.update(maeCriterion(output, target).item())
         mseLoss.update(mseCriterion(output, target).item())
         
     # mae = mae/len(test_loader)    
-    print(' * MAE {mae:.3f} '
-              .format(mae=maeLoss.avg))
-    print(' * MSE {mse:.3f} '
-              .format(mse=mseLoss.avg))
+    print(' * MAE BY PIXEL {mae:.3f} '.format(mae=maeLoss.avg))
+    print(' * MSE BY PIXEL {mse:.3f} '.format(mse=mseLoss.avg))
+    print(' * MAE BY COUNT {mae:.3f} '.format(mae=maeLossByCount.avg))
+    print(' * MSE BY COUNT {mse:.3f} '.format(mse=math.sqrt(mseLossByCount.avg)))
     resultCSV.write('%s;' % str(maeLoss.avg).replace(".", ",",1))
     resultCSV.write('%s;' % str(mseLoss.avg).replace(".", ",",1))
+    resultCSV.write('%s;' % str(maeLossByCount.avg.item()).replace(".", ",",1))
+    resultCSV.write('%s;' % str(math.sqrt(mseLossByCount.avg)).replace(".", ",",1))
     resultCSV.write('\n')
     return maeLoss.avg    
 
