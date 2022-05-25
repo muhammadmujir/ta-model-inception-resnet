@@ -45,6 +45,8 @@ parser.add_argument('worker_count',metavar='WORKER_COUNT', type=int,
                     help='worker count')
 parser.add_argument('epoch_count',metavar='EPOCH_COUNT', type=int,
                     help='epoch count')
+parser.add_argument('print_count',metavar='PRINT_COUNT', type=int,
+                    help='print frequency')
 
 resultCSV = None
 resultPath = None
@@ -70,7 +72,7 @@ def main():
     # args.workers = 4
     args.workers = args.worker_count
     args.seed = time.time()
-    args.print_freq = 30
+    args.print_freq = args.print_count
     # with open(args.train_json, 'r') as outfile:        
     #     train_list = json.load(outfile)
     # with open(args.test_json, 'r') as outfile:       
