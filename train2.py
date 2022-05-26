@@ -21,6 +21,7 @@ import glob
 import os
 from dataloader import DataLoader
 import math
+from loss import CustomMSELoss
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -88,10 +89,12 @@ def main():
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
-        criterion = nn.MSELoss(size_average=False).cuda()
+        # criterion = nn.MSELoss(size_average=False).cuda()
+        criterion = CustomMSELoss(size_average=False, root=True).cuda()
     else:
         model = model.cpu()
-        criterion = nn.MSELoss(size_average=False).cpu()
+        # criterion = nn.MSELoss(size_average=False).cpu()
+        criterion = CustomMSELoss(size_average=False, root=True).cpu()
     
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -115,10 +118,12 @@ def main():
         if (epoch == 0):
             resultCSV = open(os.path.join(resultPath, 'result.csv'), 'w')
             resultCSV.write('%s;' % "Epoch")
-            if isinstance(criterion, nn.MSELoss):
+            if isinstance(criterion, nn.MSELoss) or isinstance(criterion, CustomMSELoss):
                 resultCSV.write('%s;' % "Training Loss (MSE)")
             else:
                 resultCSV.write('%s;' % "Training Loss (MAE)")
+            resultCSV.write('%s;' % "Training MAE")
+            resultCSV.write('%s;' % "Training MSE")
             resultCSV.write('%s;' % "Testing MAE BY PIXEL")
             resultCSV.write('%s;' % "Testing MSE BY PIXEL")
             resultCSV.write('%s;' % "Testing MAE BY COUNT")
@@ -148,6 +153,8 @@ def train(train_list, model, criterion, optimizer, epoch):
     global resultCSV, resultPath
     
     losses = AverageMeter()
+    trainMaeloss = AverageMeter()
+    trainMseloss = AverageMeter()
     batch_time = AverageMeter()
     data_time = AverageMeter()
     
@@ -196,6 +203,13 @@ def train(train_list, model, criterion, optimizer, epoch):
         loss.backward()
         optimizer.step()    
         
+        if args.gpu != 'None':
+            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
+        else:
+            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+        trainMaeloss.update(mae)
+        trainMseloss.update(mae*mae)
+        
         batch_time.update(time.time() - end)
         end = time.time()
         
@@ -209,6 +223,8 @@ def train(train_list, model, criterion, optimizer, epoch):
                    data_time=data_time, loss=losses))
     
     resultCSV.write('%s;' % str(losses.avg).replace(".", ",",1))
+    resultCSV.write('%s;' % str(trainMaeloss.avg.item()).replace(".", ",",1))
+    resultCSV.write('%s;' % str(math.sqrt(trainMseloss.avg)).replace(".", ",",1))
     
 def validate(val_list, model, criterion):
     global resultCSV, resultPath
