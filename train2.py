@@ -88,10 +88,10 @@ def main():
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
-        criterion = nn.L1Loss(size_average=False).cuda()
+        criterion = nn.MSELoss(size_average=False).cuda()
     else:
         model = model.cpu()
-        criterion = nn.L1Loss(size_average=False).cpu()
+        criterion = nn.MSELoss(size_average=False).cpu()
     
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
