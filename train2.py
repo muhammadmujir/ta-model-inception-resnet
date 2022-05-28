@@ -98,6 +98,7 @@ def main():
     elif args.gpu == 'TPU':
         devTPU = xm.xla_device()
         model = model.to(devTPU)
+        criterion = CustomMSELoss(size_average=False, root=True).to(devTPU)
     else:
         model = model.cpu()
         # criterion = nn.MSELoss(size_average=False).cpu()
