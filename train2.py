@@ -110,7 +110,12 @@ def main():
     if args.pre:
         if os.path.isfile(args.pre):
             print("=> loading checkpoint '{}'".format(args.pre))
-            checkpoint = toDevice(torch.load(args.pre))
+            if args.gpu != 'None' and args.gpu != 'TPU':
+                checkpoint = torch.load(args.pre)
+            elif args.gpu == 'TPU':
+                checkpoint = torch.load(args.pre, map_location=torch.device(devTPU))
+            else:
+                checkpoint = torch.load(args.pre, map_location=torch.device('cpu'))
             args.start_epoch = checkpoint['epoch']
             best_prec1 = checkpoint['best_prec1']
             model.load_state_dict(checkpoint['state_dict'])
