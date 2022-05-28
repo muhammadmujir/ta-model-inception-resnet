@@ -295,7 +295,7 @@ def adjust_learning_rate(optimizer, epoch):
 def toDevice(tens):
     global devTPU
     
-    if args.gpu != 'None':
+    if args.gpu != 'None' and args.gpu != 'TPU':
         tens = tens.cuda()
     elif args.gpu == 'TPU':
         tens = tens.to(devTPU)
