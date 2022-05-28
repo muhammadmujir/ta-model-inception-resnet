@@ -22,8 +22,6 @@ import os
 from dataloader import DataLoader
 import math
 from loss import CustomMSELoss
-import torch_xla
-import torch_xla.core.xla_model as xm
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -90,6 +88,8 @@ def main():
     model = CSRNet()
     
     if args.gpu == 'TPU':
+        import torch_xla
+        import torch_xla.core.xla_model as xm
         devTPU = xm.xla_device()
         model = model.to(devTPU)
         criterion = CustomMSELoss(size_average=False, root=True).to(devTPU)
