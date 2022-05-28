@@ -22,6 +22,8 @@ import os
 from dataloader import DataLoader
 import math
 from loss import CustomMSELoss
+import torch_xla
+import torch_xla.core.xla_model as xm
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -52,10 +54,11 @@ parser.add_argument('print_count',metavar='PRINT_COUNT', type=int,
 
 resultCSV = None
 resultPath = None
+devTPU = None
 
 def main():
     
-    global args,best_prec1,resultPath,resultCSV
+    global args,best_prec1,resultPath,resultCSV,devTPU
     
     best_prec1 = 1e6
     
@@ -85,12 +88,16 @@ def main():
     resultPath = args.result_path
     
     model = CSRNet()
+    
     if args.gpu != 'None':
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
         # criterion = nn.MSELoss(size_average=False).cuda()
         criterion = CustomMSELoss(size_average=False, root=True).cuda()
+    elif args.gpu == 'TPU':
+        devTPU = xm.xla_device()
+        model = model.to(devTPU)
     else:
         model = model.cpu()
         # criterion = nn.MSELoss(size_average=False).cpu()
@@ -103,7 +110,7 @@ def main():
     if args.pre:
         if os.path.isfile(args.pre):
             print("=> loading checkpoint '{}'".format(args.pre))
-            checkpoint = torch.load(args.pre)
+            checkpoint = toDevice(torch.load(args.pre))
             args.start_epoch = checkpoint['epoch']
             best_prec1 = checkpoint['best_prec1']
             model.load_state_dict(checkpoint['state_dict'])
@@ -150,7 +157,7 @@ def main():
 
 def train(train_list, model, criterion, optimizer, epoch):
     
-    global resultCSV, resultPath
+    global resultCSV, resultPath, devTPU
     
     losses = AverageMeter()
     trainMaeloss = AverageMeter()
@@ -181,20 +188,11 @@ def train(train_list, model, criterion, optimizer, epoch):
     
     for i,(img, target, path) in enumerate(train_loader):
         data_time.update(time.time() - end)
-        
-        if args.gpu != 'None':
-            img = img.cuda()
-        else:
-            img = img.cpu()
+        img = toDevice(img)
         img = Variable(img)
         output = model(img)
-        
-        if args.gpu != 'None':
-            target = target.type(torch.FloatTensor).unsqueeze(0).cuda()
-        else:
-            target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
+        target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
         target = Variable(target)
-        
         
         loss = criterion(output, target)
         
@@ -202,14 +200,10 @@ def train(train_list, model, criterion, optimizer, epoch):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()    
+        mae = abs(output.data.sum()-toDevice(target.sum().type(torch.FloatTensor)))
         
-        if args.gpu != 'None':
-            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
-        else:
-            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
         trainMaeloss.update(mae)
         trainMseloss.update(mae*mae)
-        
         batch_time.update(time.time() - end)
         end = time.time()
         
@@ -241,32 +235,21 @@ def validate(val_list, model, criterion):
     batch_size=args.batch_size)    
     
     model.eval()
+    maeCriterion = toDevice(nn.L1Loss(size_average=False))
+    mseCriterion = toDevice(nn.MSELoss(size_average=False))
     
-    maeCriterion = nn.L1Loss(size_average=False).cuda() if args.gpu != 'None' else nn.L1Loss(size_average=False).cpu()
-    mseCriterion = nn.MSELoss(size_average=False).cuda() if args.gpu != 'None' else nn.MSELoss(size_average=False).cpu()
     maeLoss = AverageMeter()
     mseLoss = AverageMeter()
     maeLossByCount = AverageMeter()
     mseLossByCount = AverageMeter()
     
     for i,(img, target, path) in enumerate(test_loader):
-        if args.gpu != 'None':
-            img = img.cuda()
-        else:
-            img = img.cpu()
+        img = toDevice(img)
         img = Variable(img)
         output = model(img)
-        
-        if args.gpu != 'None':
-            target = target.type(torch.FloatTensor).unsqueeze(0).cuda()
-        else:
-            target = target.type(torch.FloatTensor).unsqueeze(0).cpu()
+        target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
         target = Variable(target)
-        
-        if args.gpu != 'None':
-            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cuda())
-        else:
-            mae = abs(output.data.sum()-target.sum().type(torch.FloatTensor).cpu())
+        mae = abs(output.data.sum()-toDevice(target.sum().type(torch.FloatTensor)))
         
         maeLossByCount.update(mae)
         mseLossByCount.update(mae*mae)
@@ -304,6 +287,17 @@ def adjust_learning_rate(optimizer, epoch):
             break
     for param_group in optimizer.param_groups:
         param_group['lr'] = args.lr
+
+def toDevice(tens):
+    global devTPU
+    
+    if args.gpu != 'None':
+        tens = tens.cuda()
+    elif args.gpu == 'TPU':
+        tens = tens.to(devTPU)
+    else:
+        tens = tens.cpu()
+    return tens
         
 class AverageMeter(object):
     """Computes and stores the average and current value"""
