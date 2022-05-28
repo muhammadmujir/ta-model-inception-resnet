@@ -112,8 +112,6 @@ def main():
             print("=> loading checkpoint '{}'".format(args.pre))
             if args.gpu != 'None' and args.gpu != 'TPU':
                 checkpoint = torch.load(args.pre)
-            elif args.gpu == 'TPU':
-                checkpoint = torch.load(args.pre, map_location=torch.device(devTPU))
             else:
                 checkpoint = torch.load(args.pre, map_location=torch.device('cpu'))
             args.start_epoch = checkpoint['epoch']
