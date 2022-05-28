@@ -89,16 +89,16 @@ def main():
     
     model = CSRNet()
     
-    if args.gpu != 'None' and args.gpu != 'TPU':
+    if args.gpu == 'TPU':
+        devTPU = xm.xla_device()
+        model = model.to(devTPU)
+        criterion = CustomMSELoss(size_average=False, root=True).to(devTPU)
+    elif args.gpu != 'None':
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
         # criterion = nn.MSELoss(size_average=False).cuda()
         criterion = CustomMSELoss(size_average=False, root=True).cuda()
-    elif args.gpu == 'TPU':
-        devTPU = xm.xla_device()
-        model = model.to(devTPU)
-        criterion = CustomMSELoss(size_average=False, root=True).to(devTPU)
     else:
         model = model.cpu()
         # criterion = nn.MSELoss(size_average=False).cpu()
@@ -295,10 +295,10 @@ def adjust_learning_rate(optimizer, epoch):
 def toDevice(tens):
     global devTPU
     
-    if args.gpu != 'None' and args.gpu != 'TPU':
-        tens = tens.cuda()
-    elif args.gpu == 'TPU':
+    if args.gpu == 'TPU':
         tens = tens.to(devTPU)
+    elif args.gpu != 'None':
+        tens = tens.cuda()
     else:
         tens = tens.cpu()
     return tens
