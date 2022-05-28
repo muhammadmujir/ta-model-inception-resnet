@@ -89,7 +89,7 @@ def main():
     
     model = CSRNet()
     
-    if args.gpu != 'None':
+    if args.gpu != 'None' and args.gpu != 'TPU':
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
