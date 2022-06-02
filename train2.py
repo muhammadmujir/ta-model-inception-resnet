@@ -104,10 +104,9 @@ def main():
         # criterion = nn.MSELoss(size_average=False).cpu()
         criterion = nn.L1Loss(size_average=False).cpu()
     
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.decay)
-
+    optimizer = torch.optim.Adam(model.parameters(), args.lr, weight_decay=args.decay)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.8, patience=5)
+    
     if args.pre:
         if os.path.isfile(args.pre):
             print("=> loading checkpoint '{}'".format(args.pre))
@@ -118,7 +117,7 @@ def main():
             args.start_epoch = checkpoint['epoch']
             best_prec1 = checkpoint['best_prec1']
             model.load_state_dict(checkpoint['state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer'])
+            # optimizer.load_state_dict(checkpoint['optimizer'])
             print("=> loaded checkpoint '{}' (epoch {})"
                   .format(args.pre, checkpoint['epoch']))
         else:
@@ -143,9 +142,10 @@ def main():
         else:
             resultCSV = open(os.path.join(resultPath, 'result.csv'), 'a')
             
-        adjust_learning_rate(optimizer, epoch)
+        # adjust_learning_rate(optimizer, epoch)
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
+        scheduler.step(prec1)
         
         is_best = prec1 < best_prec1
         best_prec1 = min(prec1, best_prec1)
