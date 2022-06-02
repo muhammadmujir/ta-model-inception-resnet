@@ -107,7 +107,8 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
-
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.8, patience=5)
+    
     if args.pre:
         if os.path.isfile(args.pre):
             print("=> loading checkpoint '{}'".format(args.pre))
@@ -146,7 +147,7 @@ def main():
         adjust_learning_rate(optimizer, epoch)
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
-        
+        scheduler.step(prec1)
         is_best = prec1 < best_prec1
         best_prec1 = min(prec1, best_prec1)
         print(' * best MAE {mae:.3f} '
