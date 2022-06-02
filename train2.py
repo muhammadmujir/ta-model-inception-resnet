@@ -104,9 +104,7 @@ def main():
         # criterion = nn.MSELoss(size_average=False).cpu()
         criterion = nn.L1Loss(size_average=False).cpu()
     
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.decay)
+    optimizer = torch.optim.Adam(model.parameters(), args.lr, weight_decay=args.decay)
 
     if args.pre:
         if os.path.isfile(args.pre):
