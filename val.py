@@ -17,13 +17,14 @@ from scipy.ndimage.filters import gaussian_filter
 import scipy
 import json
 import torchvision.transforms.functional as F
-from matplotlib import cm as CM
+from matplotlib import cm
 from image import *
 from model import CSRNet
 import torch
 from torchvision import datasets, transforms
 from tqdm import tqdm
-from inception_restnet_v2.inceptionresnetv2 import InceptionResNetV2
+# from inception_restnet_v2.inceptionresnetv2 import InceptionResNetV2
+from model import CSRNet
 from constant import *
 
 transform=transforms.Compose([
@@ -47,64 +48,87 @@ part_B_test = os.path.join(root,DATASET1_TEST_B)
 path_sets = [part_A_test]
 
 #defining the image path
-img_paths = []
-for path in path_sets:
-    for img_path in glob.glob(os.path.join(path, '*.jpg')):
-       img_paths.append(img_path)
+# img_paths = []
+# for path in path_sets:
+#     for img_path in glob.glob(os.path.join(path, '*.jpg')):
+#        img_paths.append(img_path)
 
-#model = CSRNet()
-model = InceptionResNetV2()
+# #model = CSRNet()
+# model = InceptionResNetV2()
 
-#defining the model
-if (isCudaAvailable):
-    model = model.cuda()
-else:
-    model = model.cpu()
-#loading the trained weights
-checkpoint = torch.load(CHECKPOINT_PATH+'0model_best.pth.tar')
-model.load_state_dict(checkpoint['state_dict'])
+# #defining the model
+# if (isCudaAvailable):
+#     model = model.cuda()
+# else:
+#     model = model.cpu()
+# #loading the trained weights
+# checkpoint = torch.load(CHECKPOINT_PATH+'0model_best.pth.tar')
+# model.load_state_dict(checkpoint['state_dict'])
 
-mae = 0
-for i in tqdm(range(len(img_paths))):
-    img = None
+# mae = 0
+# for i in tqdm(range(len(img_paths))):
+#     img = None
+#     if (isCudaAvailable):
+#         img = transform(Image.open(img_paths[i]).convert('RGB')).cuda()
+#     else:
+#         img = transform(Image.open(img_paths[i]).convert('RGB')).cpu()
+#     gt_file = h5py.File(img_paths[i].replace('.jpg','.h5').replace('images','ground-truth'),'r')
+#     groundtruth = np.asarray(gt_file['density'])
+#     output = model(img.unsqueeze(0))
+#     if (isCudaAvailable):
+#         mae += abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
+#     else:
+#         mae += abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
+# print ("MAE : ",mae/len(img_paths))
+
+model = None
+
+def initModel(modelPath, isCudaAvailable):
+    #defining the model
+    global model
+    model = CSRNet()
     if (isCudaAvailable):
-        img = transform(Image.open(img_paths[i]).convert('RGB')).cuda()
+        model = model.cuda()
     else:
-        img = transform(Image.open(img_paths[i]).convert('RGB')).cpu()
-    gt_file = h5py.File(img_paths[i].replace('.jpg','.h5').replace('images','ground-truth'),'r')
-    groundtruth = np.asarray(gt_file['density'])
+        model = model.cpu()
+    #loading the trained weights
+    checkpoint = torch.load(modelPath)
+    model.load_state_dict(checkpoint['state_dict'])
+    
+def predictCount(imagePath, groundTruth):
+    global transform
+    
+    gtDensity = np.asarray(h5py.File(groundTruth, 'r')['density'])
+    img = transform(Image.open(imagePath).convert('RGB')).cpu()
     output = model(img.unsqueeze(0))
-    if (isCudaAvailable):
-        mae += abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
-    else:
-        mae += abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
-print ("MAE : ",mae/len(img_paths))
+    
+    print("GroundTruth Count : ",int(np.sum(gtDensity)))
+    print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
+    
+    plt.imshow(gtDensity,cmap = cm.jet)
+    plt.show()
+    outputPlot = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
+    plt.imshow(outputPlot,cmap = cm.jet)
+    plt.show()
+    
+def checkGroundTruthSame():
+    mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
+    print("Ground Truth Count", len(mat['image_info'][0][0][0][0][0]))
+    temp = h5py.File('D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth-h5\\IMG_281.h5', 'r')
+    temp_1 = np.asarray(temp['density'])
+    temp2 = h5py.File('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth\\IMG_281.h5', 'r')
+    temp_2 = np.asarray(temp2['density'])
+    isSame = temp_1 - temp_2
+    print(len(np.nonzero(isSame)[0]) == 0)
+    plt.imshow(temp_1,cmap = CM.jet)
+    print("After Gaussian Count : ",int(np.sum(temp_1)))
+    print(len(np.nonzero(temp_1)[1]))
+    plt.show()
+    print("Original Image")
+    plt.imshow(plt.imread('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\images\\IMG_281.jpg'))
+    plt.show()
 
-
-# prediction on single image
-# from matplotlib import cm as c
-# img = transform(Image.open('C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_B\\test_data\\images\\IMG_1.jpg').convert('RGB')).cpu()
-
-# output = model(img.unsqueeze(0))
-# print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
-# temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
-# plt.imshow(temp,cmap = c.jet)
-# plt.show()
-
-
-
-mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
-print("Ground Truth Count", len(mat['image_info'][0][0][0][0][0]))
-temp = h5py.File('D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth-h5\\IMG_281.h5', 'r')
-temp_1 = np.asarray(temp['density'])
-temp2 = h5py.File('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth\\IMG_281.h5', 'r')
-temp_2 = np.asarray(temp2['density'])
-isSame = temp_1 - temp_2
-print(len(np.nonzero(isSame)[0]) == 0)
-plt.imshow(temp_1,cmap = CM.jet)
-print("After Gaussian Count : ",int(np.sum(temp_1)))
-print(len(np.nonzero(temp_1)[1]))
-plt.show()
-print("Original Image")
-plt.imshow(plt.imread('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\images\\IMG_281.jpg'))
-plt.show()
+if __name__ == '__main__':
+    initModel("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\Result\\model_best.pth.tar", False)
+    predictCount("D:\\TA\\ShanghaiTech\\part_A\\test_data\\images\\IMG_144.jpg", "D:\\TA\\ShanghaiTech\\part_A\\test_data\\ground_truth\\IMG_144.h5")
+    
