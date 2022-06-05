@@ -26,6 +26,7 @@ from tqdm import tqdm
 # from inception_restnet_v2.inceptionresnetv2 import InceptionResNetV2
 from model import CSRNet
 from constant import *
+import cv2
 
 transform=transforms.Compose([
                       transforms.ToTensor(),transforms.Normalize(
@@ -104,12 +105,24 @@ def predictCount(imagePath, groundTruth):
     
     print("GroundTruth Count : ",int(np.sum(gtDensity)))
     print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
-    
+    gtDensity = cv2.resize(gtDensity,(int(gtDensity.shape[1]//8),int(gtDensity.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
+    # print("GroundTruth Count After Risze: ",int(np.sum(gtDensity)))
+    # writeOutput(torch.tensor(gtDensity), "C:\\Users\\Admin\\Desktop\\blibli\\ground_truth_density.csv")
+    writeOutput(torch.tensor(gtDensity), "C:\\Users\\Admin\\Desktop\\blibli\\resized_gt_density.csv")
+    # writeOutput(output, "C:\\Users\\Admin\\Desktop\\blibli\\output_truth_density.csv")
     plt.imshow(gtDensity,cmap = cm.jet)
     plt.show()
     outputPlot = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
     plt.imshow(outputPlot,cmap = cm.jet)
     plt.show()
+
+def writeOutput(data, file):
+    resultCSV = open(os.path.join(file), 'w')
+    for row in data:
+        for col in row:
+            resultCSV.write('%s;' % str(col.item()))
+        print("row")
+        resultCSV.write('\n')
     
 def checkGroundTruthSame():
     mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
@@ -130,5 +143,5 @@ def checkGroundTruthSame():
 
 if __name__ == '__main__':
     initModel("C:\\Users\\Admin\\Desktop\\TA\\Dataset\\Result\\model_best.pth.tar", False)
-    predictCount("D:\\TA\\ShanghaiTech\\part_A\\test_data\\images\\IMG_144.jpg", "D:\\TA\\ShanghaiTech\\part_A\\test_data\\ground_truth\\IMG_144.h5")
+    predictCount("D:\\TA\\Dataset\\ShanghaiTech\\part_B\\train_data\\images\\IMG_5.jpg", "D:\\TA\\Dataset\\ShanghaiTech\\part_B\\train_data\\ground-truth\\IMG_5.h5")
     

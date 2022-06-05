@@ -241,3 +241,25 @@ correlate1d(a, [1,1,1,1], axis=0, mode='constant')
 #    contoh correlate1d(a, [-1, 1, 0], origin = -1) -> penempatan hasil 
 #           convolusi diletakkan pada indkes wieght ke -> 
 #           center of weight - 1 = 1 - 1 = 0
+
+
+# =======================================================================================
+# SAVE PEOPLE LOCATION
+# =======================================================================================
+import numpy as np
+import scipy.io as io
+import os
+
+def loadAndSavePeopleLocation():
+    mat = io.loadmat("D:\\TA\\Dataset\\ShanghaiTech\\part_B\\train_data\\ground-truth\\GT_IMG_5.mat")
+    # mat = np.array(mat['annPoints'])
+    mat = mat["image_info"][0,0][0,0][0]
+    writeOutput(mat, "C:\\Users\\Admin\\Desktop\\blibli\\people_location.csv")
+
+def writeOutput(data, file):
+    resultCSV = open(os.path.join(file), 'w')
+    for row in data:
+        resultCSV.write('%s;' % str(row))
+        resultCSV.write('\n')
+
+loadAndSavePeopleLocation()
