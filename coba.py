@@ -286,3 +286,121 @@ print(findHightestImageDimen("D:\\TA\\Dataset\\ShanghaiTech\\part_A\\train_data\
 # result : ('D:\\TA\\Dataset\\ShanghaiTech\\part_A\\train_data\\images\\IMG_1.jpg', (768, 1024, 3)
 # print(findHightestImageDimen("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images"))
 # result : ('D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\img_0137.jpg', (9999, 6666, 3))
+
+# =======================================================================================
+# RENAME FILE
+# =======================================================================================
+import os
+def renameFile(path, delimiter="\\"):
+    for mat_path in glob.glob(os.path.join(path, '*.mat')):
+        filename = mat_path.split(delimiter)
+        filename = filename[len(filename)-1]
+        prevPath = mat_path.split(filename)[0]
+        filename = filename.split("GT_")[1]
+        os.rename(mat_path, prevPath+filename)
+
+renameFile("D:\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth")
+
+# =======================================================================================
+# PRINT DATASET INFO
+# =======================================================================================
+import h5py
+import os
+import scipy.io as io
+from train2 import AverageMeter
+import glob
+
+def printDatasetInfo(trainPath, testPath):
+    totAnnotation = AverageMeter()
+    maxCount = 0.0
+    # (width, height)
+    avgResolution = [AverageMeter(),AverageMeter()]
+    
+    for img_path in glob.glob(os.path.join(trainPath, '*.mat')):
+        # mat = io.loadmat(img_path)["annPoints"]
+        mat = io.loadmat(img_path)["image_info"][0,0][0,0][0]
+        density = h5py.File(img_path.replace(".mat", ".h5"), 'r')
+        density = np.asarray(density['density'])
+        annotation = len(mat)
+        totAnnotation.update(annotation)
+        if annotation > maxCount:
+            maxCount = annotation
+        avgResolution[0].update(density.shape[1])
+        avgResolution[1].update(density.shape[0])
+    
+    for img_path in glob.glob(os.path.join(testPath, '*.mat')):
+        # mat = io.loadmat(img_path)["annPoints"]
+        mat = io.loadmat(img_path)["image_info"][0,0][0,0][0]
+        density = h5py.File(img_path.replace(".mat", ".h5"), 'r')
+        density = np.asarray(density['density'])
+        annotation = len(mat)
+        totAnnotation.update(annotation)
+        if annotation > maxCount:
+            maxCount = annotation
+        avgResolution[0].update(density.shape[1])
+        avgResolution[1].update(density.shape[0])
+    
+    print("Number Of Images: ", totAnnotation.count)
+    print("Number Of Annotations: ", totAnnotation.sum)
+    print("Average Count: ", totAnnotation.avg)
+    print("Max Count: ", maxCount)
+    print("Average Resolution: ({width:.0f},{height:.0f})".format(width=avgResolution[0].avg, height=avgResolution[1].avg))
+
+printDatasetInfo("D:\\TA\\Dataset\\ShanghaiTech\\part_B\\train_data\\ground_truth", "D:\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth")
+
+
+# =======================================================================================
+# PRINT DATASET DISTRIBUTION
+# =======================================================================================
+import h5py
+import os
+import scipy.io as io
+from train2 import AverageMeter
+import glob
+
+def printDatasetDistribution(trainPath, testPath):
+    less300 = 0
+    bw300to700 = 0
+    bw700to1200 = 0
+    bw1200to2300 = 0
+    gt2300 = 0
+    
+    for img_path in glob.glob(os.path.join(trainPath, '*.mat')):
+        mat = io.loadmat(img_path)["annPoints"]
+        # mat = io.loadmat(img_path)["image_info"][0,0][0,0][0]
+        ann = len(mat)
+        if ann < 300:
+            less300 += 1
+        elif ann < 700:
+            bw300to700 += 1
+        elif ann < 1200:
+            bw700to1200 += 1
+        elif ann < 2300:
+            bw1200to2300 += 1
+        else:
+            gt2300 += 1
+    
+    for img_path in glob.glob(os.path.join(testPath, '*.mat')):
+        mat = io.loadmat(img_path)["annPoints"]
+        # mat = io.loadmat(img_path)["image_info"][0,0][0,0][0]
+        ann = len(mat)
+        if ann < 300:
+            less300 += 1
+        elif ann < 700:
+            bw300to700 += 1
+        elif ann < 1200:
+            bw700to1200 += 1
+        elif ann < 2300:
+            bw1200to2300 += 1
+        else:
+            gt2300 += 1
+        
+    
+    print("< 300: ", less300)
+    print("300 sd 700 : ", bw300to700)
+    print("700 sd 1200 : ", bw700to1200)
+    print("1200 sd 2300 : ", bw1200to2300)
+    print("> 2300 : ", gt2300)
+
+# printDatasetDistribution("D:\\TA\\Dataset\\ShanghaiTech\\part_B\\train_data\\ground_truth", "D:\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\ground_truth")
+printDatasetDistribution("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\ground_truth", "D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Test\\ground_truth")
