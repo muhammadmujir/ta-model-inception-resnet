@@ -282,5 +282,7 @@ def findHightestImageDimen(path):
             maxDimen = img.shape
     return selectedImagePath, maxDimen
 
-print(findHightestImageDimen("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images"))
+print(findHightestImageDimen("D:\\TA\\Dataset\\ShanghaiTech\\part_A\\train_data\\images"))
+# result : ('D:\\TA\\Dataset\\ShanghaiTech\\part_A\\train_data\\images\\IMG_1.jpg', (768, 1024, 3)
+# print(findHightestImageDimen("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images"))
 # result : ('D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\img_0137.jpg', (9999, 6666, 3))
