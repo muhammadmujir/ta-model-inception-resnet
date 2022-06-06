@@ -108,7 +108,7 @@ def predictCount(imagePath, groundTruth):
     gtDensity = cv2.resize(gtDensity,(int(gtDensity.shape[1]//8),int(gtDensity.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
     # print("GroundTruth Count After Risze: ",int(np.sum(gtDensity)))
     # writeOutput(torch.tensor(gtDensity), "C:\\Users\\Admin\\Desktop\\blibli\\ground_truth_density.csv")
-    writeOutput(torch.tensor(gtDensity), "C:\\Users\\Admin\\Desktop\\blibli\\resized_gt_density.csv")
+    # writeOutput(torch.tensor(gtDensity), "C:\\Users\\Admin\\Desktop\\blibli\\resized_gt_density.csv")
     # writeOutput(output, "C:\\Users\\Admin\\Desktop\\blibli\\output_truth_density.csv")
     plt.imshow(gtDensity,cmap = cm.jet)
     plt.show()

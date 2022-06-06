@@ -74,7 +74,7 @@ import torch.nn as nn
 
 loss = nn.L1Loss(size_average=False)
 input = torch.randn(3, 5, requires_grad=True)
-input = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]])
+input = torch.tensor([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]], requires_grad=True)
 target = torch.randn(3, 5)
 target = torch.tensor([[3.,4.,5.],[6.,7.,8.],[9.,10.,11.]])
 print("input", input)
@@ -263,3 +263,24 @@ def writeOutput(data, file):
         resultCSV.write('\n')
 
 loadAndSavePeopleLocation()
+
+# =======================================================================================
+# FIND HIGHEST DIMESN OF IMAGE SET
+# =======================================================================================
+import glob
+import os
+from matplotlib import pyplot as plt
+
+def findHightestImageDimen(path):
+    maxDimen = (0,0)
+    selectedImagePath = ""
+    
+    for img_path in glob.glob(os.path.join(path, '*.jpg')):
+        img = plt.imread(img_path)
+        if img.shape[0] > maxDimen[0] and img.shape[1] > maxDimen[1]:
+            selectedImagePath = img_path
+            maxDimen = img.shape
+    return selectedImagePath, maxDimen
+
+print(findHightestImageDimen("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images"))
+# result : ('D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\img_0137.jpg', (9999, 6666, 3))
