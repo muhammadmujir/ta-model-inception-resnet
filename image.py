@@ -29,7 +29,7 @@ def load_data(img_path,train = True):
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
     
-    img = img.resize((int(img.size[0]//2), int(img.size[1]//2)))
-    target = cv2.resize(target,(int(target.shape[1]//16),int(target.shape[0]//16)),interpolation = cv2.INTER_CUBIC)*256
+    img = img.resize((int(img.size[0]//3), int(img.size[1]//3)))
+    target = cv2.resize(target,(int(target.shape[1]//24),int(target.shape[0]//24)),interpolation = cv2.INTER_CUBIC)*576
     
     return img,target
