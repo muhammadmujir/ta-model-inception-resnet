@@ -35,9 +35,16 @@ def load_data(img_path,train = True):
         img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
         target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
     
-        if random.random()>0.8:
-            target = np.fliplr(target)
-            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+    else:
+        crop_size = (int(img.size[0]*0.9),int(img.size[1]*0.9))
+        dx = int(random.random()*img.size[0]*0.1)
+        dy = int(random.random()*img.size[1]*0.1)
+        img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
+        target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
+    
+    if random.random()>0.8:
+        target = np.fliplr(target)
+        img = img.transpose(Image.FLIP_LEFT_RIGHT)
             
     target = cv2.resize(target,(int(target.shape[1]//8),int(target.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
     
