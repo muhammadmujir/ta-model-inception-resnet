@@ -29,7 +29,7 @@ def load_data(img_path,train = True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
     
     if img.size[0] > 2048 or img.size[1] > 2048:
-        crop_size = (img.size[0]/2,img.size[1]/2)
+        crop_size = (img.size[0]//2,img.size[1]//2)
         if random.randint(0,9)<= -1:
             dx = int(random.randint(0,1)*img.size[0]*1./2)
             dy = int(random.randint(0,1)*img.size[1]*1./2)
