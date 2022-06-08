@@ -288,6 +288,27 @@ print(findHightestImageDimen("D:\\TA\\Dataset\\ShanghaiTech\\part_A\\train_data\
 # result : ('D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\img_0137.jpg', (9999, 6666, 3))
 
 # =======================================================================================
+# PRINT IMAGE WITH SPECIFIED SIZE
+# =======================================================================================
+import glob
+import os
+from matplotlib import pyplot as plt
+
+def findImageWithSpecifiedSize(path, size, delimiter = "\\"):
+    selectedImagePath = []
+    count = 0
+    for i, img_path in enumerate(glob.glob(os.path.join(path, '*.jpg'))):
+        img = plt.imread(img_path)
+        if img.shape[0] > size and img.shape[1] > size:
+            filename = img_path.split(delimiter)
+            filename = filename[len(filename)-1].split("img_")[1]
+            selectedImagePath.append(filename)
+            count += 1
+    return selectedImagePath, count
+
+print(findImageWithSpecifiedSize("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images", 2048))
+
+# =======================================================================================
 # RENAME FILE
 # =======================================================================================
 import os
