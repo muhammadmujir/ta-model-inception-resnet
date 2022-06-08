@@ -28,15 +28,10 @@ def load_data(img_path,train = True):
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
     
-    if img.size[0] > 2048 or img.size[1] > 2048:
-        crop_size = (img.size[0]//2,img.size[1]//2)
-        if random.randint(0,9)<= -1:
-            dx = int(random.randint(0,1)*img.size[0]*1./2)
-            dy = int(random.randint(0,1)*img.size[1]*1./2)
-        else:
-            dx = int(random.random()*img.size[0]*1./2)
-            dy = int(random.random()*img.size[1]*1./2)
-        
+    if img.size[0] >= 2000 or img.size[1] >= 2000:
+        crop_size = (int(img.size[0]*0.6),int(img.size[1]*0.6))
+        dx = int(random.random()*img.size[0]*0.4)
+        dy = int(random.random()*img.size[1]*0.4)
         img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
         target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
     
