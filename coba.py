@@ -241,3 +241,31 @@ correlate1d(a, [1,1,1,1], axis=0, mode='constant')
 #    contoh correlate1d(a, [-1, 1, 0], origin = -1) -> penempatan hasil 
 #           convolusi diletakkan pada indkes wieght ke -> 
 #           center of weight - 1 = 1 - 1 = 0
+
+
+# =======================================================================================
+# UNDERSTANDING Torch.Backward --> process to calculate gradient
+# https://towardsdatascience.com/pytorch-autograd-understanding-the-heart-of-pytorchs-magic-2686cd94ec95#:~:text=is%20not%20needed.-,Backward()%20function,grad%20of%20every%20leaf%20node.
+# =======================================================================================
+
+import torch
+
+# Creating the graph
+x = torch.tensor(1.0, requires_grad = True)
+y = torch.tensor(4.0, requires_grad= True)
+z = y / x
+
+# Displaying
+for i, name in zip([x, y, z], "xyz"):
+    print(f"{name}\ndata: {i.data}\nrequires_grad: {i.requires_grad}\n\
+grad: {i.grad}\ngrad_fn: {i.grad_fn}\nis_leaf: {i.is_leaf}\n")
+
+print("before backward:")
+print(x.grad)
+print(y.grad)
+print(z.grad)
+print("after backward:")
+z.backward()
+print(x.grad)
+print(y.grad)
+print(z.grad)
