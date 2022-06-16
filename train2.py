@@ -92,17 +92,17 @@ def main():
         import torch_xla.core.xla_model as xm
         devTPU = xm.xla_device()
         model = model.to(devTPU)
-        criterion = CustomMSELoss(size_average=False, root=True).to(devTPU)
+        criterion = CustomMSELoss(reduction='sum', root=True).to(devTPU)
     elif args.gpu != 'None':
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
         # criterion = nn.MSELoss(size_average=False).cuda()
-        criterion = CustomMSELoss(size_average=False, root=True).cuda()
+        criterion = CustomMSELoss(reduction='sum', root=True).cuda()
     else:
         model = model.cpu()
         # criterion = nn.MSELoss(size_average=False).cpu()
-        criterion = CustomMSELoss(size_average=False, root=True).cpu()
+        criterion = CustomMSELoss(reduction='sum', root=True).cpu()
     
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -198,7 +198,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
         target = Variable(target)
         
-        loss = criterion(output, target)
+        loss = criterion(output, target)/(2.*args.batch_size)
         
         losses.update(loss.item())
         optimizer.zero_grad()
