@@ -62,11 +62,11 @@ def main():
     
     args = parser.parse_args()
     args.original_lr = 1e-7
-    args.lr = 1e-7
+    args.lr = 1e-5
     # args.batch_size    = 1
     args.batch_size    = args.batch_size
     args.momentum      = 0.95
-    args.decay         = 5*1e-4
+    args.decay         = 1e-4
     args.start_epoch   = 0
     # args.epochs = 400
     args.epochs = args.epoch_count
@@ -104,9 +104,7 @@ def main():
         # criterion = nn.MSELoss(size_average=False).cpu()
         criterion = CustomMSELoss(reduction='sum', root=True).cpu()
     
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.decay)
+    optimizer = torch.optim.Adam(model.parameters(), args.lr, weight_decay=args.decay)
 
     if args.pre:
         if os.path.isfile(args.pre):
@@ -143,7 +141,7 @@ def main():
         else:
             resultCSV = open(os.path.join(resultPath, 'result.csv'), 'a')
             
-        adjust_learning_rate(optimizer, epoch)
+        # adjust_learning_rate(optimizer, epoch)
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
         
