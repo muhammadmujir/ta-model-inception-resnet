@@ -241,3 +241,21 @@ correlate1d(a, [1,1,1,1], axis=0, mode='constant')
 #    contoh correlate1d(a, [-1, 1, 0], origin = -1) -> penempatan hasil 
 #           convolusi diletakkan pada indkes wieght ke -> 
 #           center of weight - 1 = 1 - 1 = 0
+
+# https://stackoverflow.com/questions/41484104/how-numpy-partition-work
+# https://math.stackexchange.com/questions/1769706/matrix-transposition-during-euclidean-distance
+# https://github.com/ZhihengCV/Bayesian-Crowd-Counting/blob/5f10bfc50ff3cb6e424e17fa970600d55094dd9f/preprocess_dataset.py#L36
+
+def find_dis(point):
+    square = np.sum(point*point, axis=1)
+    print("SQUARE: ", square)
+    print("SQUARE SLICE: ", square[:, None])
+    print("SQUARE SLICE 2: ", square[None, :])
+    print("DOT PRODUCT: ", 2*np.matmul(point, point.T))
+    print("MAX: ", np.maximum(square[:, None] - 2*np.matmul(point, point.T) + square[None, :], 0.0))
+    dis = np.sqrt(np.maximum(square[:, None] - 2*np.matmul(point, point.T) + square[None, :], 0.0))
+    print("Dis: ", dis)
+    print("PARTITIOM: ", np.partition(dis, 3, axis=1))
+    print("SLICE PARTITIOM: ", np.partition(dis, 3, axis=1)[:, 1:4])
+    dis = np.mean(np.partition(dis, 3, axis=1)[:, 1:4], axis=1, keepdims=True)
+    return dis

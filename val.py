@@ -108,3 +108,13 @@ plt.show()
 print("Original Image")
 plt.imshow(plt.imread('C:\\Users\\Admin\\Desktop\\TA\\Dataset\\ShanghaiTech\\part_B\\test_data\\images\\IMG_281.jpg'))
 plt.show()
+
+# ------------------------------------------------------------------------------
+# --------------------- UCF_QNRF Dataset ---------------------------------------
+# ------------------------------------------------------------------------------
+mat = io.loadmat("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\ground_truth\\img_0001_ann.mat")
+points = mat['annPoints']
+im = Image.open("D:\\TA\\Dataset\\UCF-QNRF_ECCV18\\Train\\images\\img_0001.jpg")
+im_w, im_h = im.size
+idx_mask = (points[:, 0] >= 0) * (points[:, 0] <= im_w) * (points[:, 1] >= 0) * (points[:, 1] <= im_h)
+print(points[idx_mask])
