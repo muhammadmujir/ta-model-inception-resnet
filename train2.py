@@ -205,7 +205,7 @@ def train(train_list, model, criterion, optimizer, epoch):
         target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
         target = Variable(target)
         
-        loss = criterion(output, target)/(2.*args.batch_size)
+        loss = criterion(output, target)/(1.*args.batch_size)
         
         losses.update(loss.item())
         optimizer.zero_grad()
