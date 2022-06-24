@@ -81,8 +81,17 @@ def main():
     # with open(args.test_json, 'r') as outfile:       
     #     val_list = json.load(outfile)
     
-    train_list = glob.glob(os.path.join(args.train_json, '*.jpg'))
-    val_list = glob.glob(os.path.join(args.test_json, '*.jpg'))
+    
+    train_list = []
+    val_list = []
+    for phase in ['train', 'val']:
+        f = open('{}.txt'.format(phase))
+        for filename in f:
+            if phase == 'train':
+                train_list.append(os.path.join(args.train_json, filename.strip()))
+            else:
+                val_list.append(os.path.join(args.train_json, filename.strip()))
+    
     resultPath = args.result_path
     
     model = CSRNet()

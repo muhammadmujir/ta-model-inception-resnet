@@ -6,11 +6,43 @@ import h5py
 from PIL import ImageStat
 import cv2
 
+def cal_new_size(im_h, im_w, min_size, max_size):
+    if im_h < im_w:
+        if im_h < min_size:
+            ratio = 1.0 * min_size / im_h
+            im_h = min_size
+            im_w = round(im_w*ratio)
+        elif im_h > max_size:
+            ratio = 1.0 * max_size / im_h
+            im_h = max_size
+            im_w = round(im_w*ratio)
+        else:
+            ratio = 1.0
+    else:
+        if im_w < min_size:
+            ratio = 1.0 * min_size / im_w
+            im_w = min_size
+            im_h = round(im_h*ratio)
+        elif im_w > max_size:
+            ratio = 1.0 * max_size / im_w
+            im_w = max_size
+            im_h = round(im_h*ratio)
+        else:
+            ratio = 1.0
+    return im_h, im_w, ratio
+
+
 def load_data(img_path,train = True):
+    min_size = 512
+    max_size = 2048
     gt_path = img_path.replace('.jpg','.h5').replace('images','ground_truth')
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path)
     target = np.asarray(gt_file['density'])
+    img_h, img_w, ratio = cal_new_size(target.shape[0], target.shape[1], min_size, max_size)
+    
+    target = cv2.resize(target,(int(target.shape[1]*ratio),int(target.shape[0]*ratio)),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
+    
     if False:
         crop_size = (img.size[0]/2,img.size[1]/2)
         if random.randint(0,9)<= -1:
