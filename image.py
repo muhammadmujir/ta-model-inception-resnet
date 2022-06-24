@@ -39,25 +39,24 @@ def load_data(img_path,train = True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path)
     target = np.asarray(gt_file['density'])
+    
     img_h, img_w, ratio = cal_new_size(target.shape[0], target.shape[1], min_size, max_size)
-    
     target = cv2.resize(target,(int(target.shape[1]*ratio),int(target.shape[0]*ratio)),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
+    img = img.resize((int(img.size[0]*ratio), int(img.size[1]*ratio)))
     
-    if False:
-        crop_size = (img.size[0]/2,img.size[1]/2)
-        if random.randint(0,9)<= -1:
-            
-            
-            dx = int(random.randint(0,1)*img.size[0]*1./2)
-            dy = int(random.randint(0,1)*img.size[1]*1./2)
+    if True:
+        crop_size = (512,512)
+        if random.randint(0,9) <= -1:
+            dx = int(random.randint(0,1)*(img.size[0] - crop_size[0]))
+            dy = int(random.randint(0,1)*(img.size[1] - crop_size[1]))
         else:
-            dx = int(random.random()*img.size[0]*1./2)
-            dy = int(random.random()*img.size[1]*1./2)
+            dx = int(random.random()*(img.size[0] - crop_size[0]))
+            dy = int(random.random()*(img.size[1] - crop_size[1]))
         
         img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
         target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
     
-        if random.random()>0.8:
+        if random.random()>0.5:
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
     
