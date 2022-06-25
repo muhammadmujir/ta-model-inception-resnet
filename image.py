@@ -41,8 +41,8 @@ def load_data(img_path,train = True):
     target = np.asarray(gt_file['density'])
     
     img_h, img_w, ratio = cal_new_size(target.shape[0], target.shape[1], min_size, max_size)
-    target = cv2.resize(target,(int(target.shape[1]*ratio),int(target.shape[0]*ratio)),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
-    img = img.resize((int(img.size[0]*ratio), int(img.size[1]*ratio)))
+    target = cv2.resize(target,(img_w,img_h),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
+    img = img.resize((img_w,img_h))
     
     if True:
         crop_size = (512,512)
@@ -63,3 +63,8 @@ def load_data(img_path,train = True):
     target = cv2.resize(target,(int(target.shape[1]//8),int(target.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
     
     return img,target
+
+# if __name__ == '__main__':
+#     img, target = load_data("D:\\TA\\Dataset\\UCF_QNRF_RESIZED\\Train\\images\\img_0524.jpg")
+#     print(img.size)
+#     print(target.shape)
