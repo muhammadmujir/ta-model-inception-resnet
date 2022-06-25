@@ -277,7 +277,7 @@ def validate(val_list, model, criterion):
     resultCSV.write('%s;' % str(maeLossByCount.avg.item()).replace(".", ",",1))
     resultCSV.write('%s;' % str(math.sqrt(mseLossByCount.avg)).replace(".", ",",1))
     resultCSV.write('\n')
-    return maeLoss.avg    
+    return maeLossByCount.avg.item()    
 
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
