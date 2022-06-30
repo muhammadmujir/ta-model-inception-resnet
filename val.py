@@ -36,8 +36,8 @@ parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
-parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
-parser.add_argument('--crop', '-c', metavar='IS_CROP', type=bool, help='option to crop image')
+parser.add_argument('--large-file', metavar='IS_LARGE_FILE', type=bool, action='store_true', help='enable resize and crop for large file')
+parser.add_argument('--crop', '-c', metavar='IS_CROP', type=bool, action='store_true', help='option to crop image')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
 
@@ -81,7 +81,7 @@ def main():
     test_loader = DataLoader(
     dataset.listDataset(paths,
                    shuffle=False,
-                   isLargeSize=args.is_large_file,
+                   isLargeSize=args.large_file,
                    isCrop=args.crop,
                    transform=transforms.Compose([
                        transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],
