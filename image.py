@@ -59,7 +59,7 @@ def cal_new_size(im_h, im_w, min_size, max_size):
     return im_h, im_w, ratio
 
 
-def load_data_large_size(img_path, train = True):
+def load_data_large_size(img_path, train = True, crop=True):
     min_size = 512
     max_size = 2048
     gt_path = img_path.replace('.jpg','.h5').replace('images','ground_truth')
@@ -71,7 +71,7 @@ def load_data_large_size(img_path, train = True):
     target = cv2.resize(target,(img_w,img_h),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
     img = img.resize((img_w,img_h))
     
-    if True:
+    if crop:
         crop_size = (512,512)
         if random.randint(0,9) <= -1:
             dx = int(random.randint(0,1)*(img.size[0] - crop_size[0]))

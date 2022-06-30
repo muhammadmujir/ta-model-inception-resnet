@@ -37,13 +37,11 @@ parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing imag
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
-parser.add_argument('is_run_colab',metavar='IS_RUN_COLAB', type=bool, help='determine the library to show plt.imshow()')
+parser.add_argument('is_crop',metavar='IS_CROP', default=True, type=bool, help='option to crop image')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
 
 args = parser.parse_args()
-if args.is_run_colab:
-    from google.colab.patches import cv2_imshow
 
 def toDevice(tens):
     global args
@@ -83,6 +81,7 @@ def main():
     dataset.listDataset(paths,
                    shuffle=False,
                    isLargeSize=args.is_large_file,
+                   isCrop=args.is_crop,
                    transform=transforms.Compose([
                        transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225]),
@@ -119,15 +118,14 @@ def main():
         print(path)
         plt.figure()
         plt.imshow(plt.imread(path))
-        print(plt.imread(path).shape)
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        # plt.figure()
-        # plt.imshow(temp,cmap = cm.jet)
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
-        # plt.figure()
-        # plt.imshow(temp,cmap = cm.jet)
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
         plt.show()
                 
 def valManyImages():
