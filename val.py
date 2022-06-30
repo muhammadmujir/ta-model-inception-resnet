@@ -74,7 +74,7 @@ def main():
             print("=> no checkpoint found at '{}'".format(args.pre))
     else:
         print("Checkpoint Not Set")     
-    print("COBA")
+    print("COBA: ", args.is_crop)
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
