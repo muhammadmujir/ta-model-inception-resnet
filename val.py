@@ -111,7 +111,7 @@ def main():
         plt.imshow(plt.imread(path))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
         plt.imshow(temp,cmap = cm.jet)
-        outputDensity = toDevice(bestOutputDensity[i].detach())
+        outputDensity = bestOutputDensity[i].detach().cpu()
         temp = np.asarray(outputDensity)
         plt.imshow(temp,cmap = cm.jet)
         plt.show()
