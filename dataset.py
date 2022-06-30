@@ -32,7 +32,8 @@ class listDataset(Dataset):
         
         img_path = self.lines[index]
         
-        img,target = load_data(img_path,self.train) if not self.isLargeSize  else load_data_large_size(img_path,self.train, self.isCrop)
+        # img,target = load_data(img_path,self.train) if not self.isLargeSize  else load_data_large_size(img_path,self.train, self.isCrop)
+        img,target = load_data_ucf(img_path,self.train)
         
         #img = 255.0 * F.to_tensor(img)
         
