@@ -124,7 +124,7 @@ def main():
         print("---------TARGET DENSITY MAP---------")
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
-        temp = np.asarray(bestTargetDensity)
+        temp = np.asarray(targetDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
         print("---------PREDICTED DENSITY MAP---------")
