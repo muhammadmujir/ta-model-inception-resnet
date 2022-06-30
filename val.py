@@ -54,8 +54,9 @@ def toDevice(tens):
     return tens
 
 def showPlot(image):
-    if args.is_run_colab:
-        cv2_imshow(image)
+    a = 1
+    # if args.is_run_colab:
+        # cv2_imshow(image)
     
 def main():
     global args
@@ -124,7 +125,7 @@ def main():
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
         showPlot(plt.imshow(temp,cmap = cm.jet))
-        plt.show()
+        # plt.show()
                 
 def valManyImages():
     #defining the location of dataset
