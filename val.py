@@ -28,6 +28,7 @@ from constant import *
 import torch
 import torch.nn as nn
 import argparse
+from torch.autograd import Variable
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -63,6 +64,11 @@ def main():
             img = transform(Image.open(path).convert('RGB')).cpu()
         gt_file = h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'),'r')
         groundtruth = np.asarray(gt_file['density'])
+        if isCudaAvailable:
+            groundtruth = groundtruth.type(torch.FloatTensor).unsqueeze(0).cuda()
+        else:
+            groundtruth = groundtruth.type(torch.FloatTensor).unsqueeze(0).cpu()
+        groundtruth = Variable(groundtruth)
         output = model(img.unsqueeze(0))
         # if (isCudaAvailable):
         #     mae = abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
