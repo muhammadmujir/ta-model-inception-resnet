@@ -99,7 +99,7 @@ def main():
         pixelMae = maeCriterion(output, target).item()
         maeByPixel += pixelMae
         
-        if len(bestMaeResult) < best_result_count-1:
+        if len(bestMaeResult) < best_result_count:
             bestMaeResult.append(mae)
             bestPixelMaeResult.append(pixelMae)
             pathResult.append(path)
