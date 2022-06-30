@@ -36,6 +36,7 @@ parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
+parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
 args = parser.parse_args()
 
 def toDevice(tens):
@@ -47,7 +48,6 @@ def toDevice(tens):
     return tens
 
 def main():
-    args = parser.parse_args()
     img_path = args.img_path
     best_result_count = args.best_result_count
     isCudaAvailable = True if args.gpu != 'None' else False 
@@ -64,6 +64,7 @@ def main():
     test_loader = DataLoader(
     dataset.listDataset(paths,
                    shuffle=False,
+                   isLargeSize=args.is_large_file,
                    transform=transforms.Compose([
                        transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225]),
