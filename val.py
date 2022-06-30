@@ -74,7 +74,6 @@ def main():
             print("=> no checkpoint found at '{}'".format(args.pre))
     else:
         print("Checkpoint Not Set")     
-    print("COBA: ", args.crop)
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
@@ -90,7 +89,6 @@ def main():
     batch_size=1)
     
     for i,(img, target, path) in enumerate(test_loader):
-        print("PATH: ", path)
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
