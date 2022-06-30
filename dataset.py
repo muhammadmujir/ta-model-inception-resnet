@@ -8,7 +8,7 @@ from image import *
 import torchvision.transforms.functional as F
 
 class listDataset(Dataset):
-    def __init__(self, root, duplicate = 1, shape=None, shuffle=True, transform=None,  train=False, seen=0, batch_size=1, num_workers=4):
+    def __init__(self, root, duplicate = 1, shape=None, shuffle=True, transform=None,  train=False, seen=0, batch_size=1, num_workers=4, isLargeSize=False):
         if train:
             # root = root *4
             root = root * duplicate
@@ -22,6 +22,7 @@ class listDataset(Dataset):
         self.seen = seen
         self.batch_size = batch_size
         self.num_workers = num_workers
+        self.isLargeSize = isLargeSize
         
         
     def __len__(self):
@@ -31,7 +32,7 @@ class listDataset(Dataset):
         
         img_path = self.lines[index]
         
-        img,target = load_data(img_path,self.train)
+        img,target = load_data(img_path,self.train) if not self.isLargeSize  else load_data_large_size(img_path,self.train)
         
         #img = 255.0 * F.to_tensor(img)
         
