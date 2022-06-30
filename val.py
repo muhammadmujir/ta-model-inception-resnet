@@ -52,11 +52,6 @@ def toDevice(tens):
     else:
         tens = tens.cpu()
     return tens
-
-def showPlot(image):
-    image
-    # if args.is_run_colab:
-        # cv2_imshow(image)
     
 def main():
     global args
@@ -122,16 +117,17 @@ def main():
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        # showPlot(plt.imshow(plt.imread(path)))
+        plt.figure()
+        plt.imshow(plt.imread(path))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        # showPlot(plt.imshow(temp,cmap = cm.jet))
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
-        plt.subplot(2,3,1)
-        # showPlot(plt.imshow(temp,cmap = cm.jet))
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
         # plt.show()
-        break
                 
 def valManyImages():
     #defining the location of dataset
