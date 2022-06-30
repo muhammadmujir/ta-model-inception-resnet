@@ -119,6 +119,7 @@ def main():
         print(path)
         plt.figure()
         plt.imshow(plt.imread(path))
+        print(plt.imread(path).shape)
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
         # plt.figure()
         # plt.imshow(temp,cmap = cm.jet)
