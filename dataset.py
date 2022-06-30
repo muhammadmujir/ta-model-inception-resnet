@@ -36,6 +36,7 @@ class listDataset(Dataset):
         
         img_path = self.lines[index]
         
+        print("get item")
         img,target = load_data(img_path,self.train) if not self.isLargeSize  else load_data_large_size(img_path,self.train, self.isCrop)
         
         #img = 255.0 * F.to_tensor(img)
