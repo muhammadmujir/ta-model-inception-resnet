@@ -10,8 +10,8 @@ import numpy as np
 def main():
     painting=plt.imread("https://www.freepnglogos.com/uploads/server-png/home-server-icon-icons-and-png-backgrounds-30.png")
     for i in range(2):
-      plt.figure()
-      plt.imshow(painting)
+        plt.figure()
+        plt.imshow(painting)
       
 if __name__ == '__main__' :
     main()
