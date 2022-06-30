@@ -106,6 +106,7 @@ def main():
     print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     for (i, path) in enumerate(pathResult):
+        path = path[0]
         print(path)
         plt.imshow(plt.imread(path))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
