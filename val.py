@@ -54,7 +54,7 @@ def toDevice(tens):
     return tens
 
 def showPlot(image):
-    a = 1
+    image
     # if args.is_run_colab:
         # cv2_imshow(image)
     
