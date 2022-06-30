@@ -35,7 +35,7 @@ import dataset
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
-parser.add_argument('best_result_count', metavar='BEST_RESULT_COUNT', help='best result count')
+parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 args = parser.parse_args()
 
 def toDevice(tens):
