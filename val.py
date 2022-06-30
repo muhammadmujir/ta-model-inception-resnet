@@ -75,7 +75,7 @@ def main():
         else:
             print("=> no checkpoint found at '{}'".format(args.pre))
     else:
-        print("Argument Not set")        
+        print("Checkpoint Not Set")        
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
@@ -127,7 +127,7 @@ def main():
         temp = np.asarray(outputDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
-        # plt.show()
+        plt.show()
                 
 def valManyImages():
     #defining the location of dataset
