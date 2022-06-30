@@ -123,7 +123,7 @@ def main():
         plt.imshow(plt.imread(path))
         print("---------TARGET DENSITY MAP---------")
         bestTargetDensity = bestTargetDensity[i].detach().cpu()
-        bestTargetDensity = bestTargetDensity.reshape(bestTargetDensity.shape[2], bestTargetDensity.shape[3])
+        bestTargetDensity = bestTargetDensity[i].reshape(bestTargetDensity.shape[2], bestTargetDensity.shape[3])
         temp = np.asarray(bestTargetDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
@@ -133,7 +133,7 @@ def main():
         temp = np.asarray(outputDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
-        plt.show()
+        # plt.show()
                 
 def valManyImages():
     #defining the location of dataset
