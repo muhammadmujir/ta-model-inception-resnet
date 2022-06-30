@@ -127,7 +127,7 @@ def main():
         plt.figure()
         # plt.imshow(plt.imread(path))
         img = bestImage[i].detach().cpu()
-        img = img.reshape(img.shape[2], img.shape[3], img.shape[1])
+        img = img.reshape(img.shape[3], img.shape[2], img.shape[1])
         plt.imshow(img)
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
