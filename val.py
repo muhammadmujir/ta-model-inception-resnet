@@ -128,8 +128,9 @@ def main():
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
-        showPlot(plt.imshow(temp,cmap = cm.jet))
-        plt.show()
+        plt.subplot(2,3,1)
+        # showPlot(plt.imshow(temp,cmap = cm.jet))
+        # plt.show()
         break
                 
 def valManyImages():
