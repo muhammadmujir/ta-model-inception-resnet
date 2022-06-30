@@ -116,18 +116,17 @@ def main():
                 bestOutputDensity[indexOfMaxVal] = output
     print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
+    print("Original Image - Target Density Map - Predicted Density Map")
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
         plt.figure()
         plt.imshow(plt.imread(path))
-        print("---------TARGET DENSITY MAP---------")
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
-        print("---------PREDICTED DENSITY MAP---------")
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
