@@ -71,6 +71,7 @@ def load_data_large_size(img_path, train = True, crop=True):
     target = cv2.resize(target,(img_w,img_h),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
     img = img.resize((img_w,img_h))
     
+    print("CROP: ", crop)
     if crop:
         print("CROP")
         crop_size = (512,512)
