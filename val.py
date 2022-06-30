@@ -61,6 +61,7 @@ def main():
     bestMaeResult = []
     bestPixelMaeResult = []
     pathResult = []
+    bestTargetDensity = []
     bestOutputDensity = []
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
     if args.pre:
@@ -103,6 +104,7 @@ def main():
             bestMaeResult.append(mae)
             bestPixelMaeResult.append(pixelMae)
             pathResult.append(path)
+            bestTargetDensity.append(target)
             bestOutputDensity.append(output)
         else:
             indexOfMaxVal = bestMaeResult.index(max(bestMaeResult)) 
@@ -110,21 +112,24 @@ def main():
                 bestMaeResult[indexOfMaxVal] = mae
                 bestPixelMaeResult[indexOfMaxVal] = pixelMae
                 pathResult[indexOfMaxVal] = path
+                bestTargetDensity[indexOfMaxVal] = target
                 bestOutputDensity[indexOfMaxVal] = output
     print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        # plt.figure()
-        # plt.imshow(plt.imread(path))
-        # temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        # plt.figure()
-        # plt.imshow(temp,cmap = cm.jet)
+        plt.figure()
+        plt.imshow(plt.imread(path))
+        print("---------TARGET DENSITY MAP---------")
+        bestTargetDensity = bestTargetDensity[i].detach().cpu()
+        bestTargetDensity = bestTargetDensity.reshape(bestTargetDensity.shape[2], bestTargetDensity.shape[3])
+        temp = np.asarray(bestTargetDensity)
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
+        print("---------PREDICTED DENSITY MAP---------")
         outputDensity = bestOutputDensity[i].detach().cpu()
-        print("Output Density: ", outputDensity.shape)
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
-        print("After Output Density: ", outputDensity.shape)
         temp = np.asarray(outputDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
