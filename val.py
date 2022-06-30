@@ -61,6 +61,7 @@ def main():
     bestMaeResult = []
     bestPixelMaeResult = []
     pathResult = []
+    bestImage = []
     bestTargetDensity = []
     bestOutputDensity = []
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
@@ -104,6 +105,7 @@ def main():
             bestMaeResult.append(mae)
             bestPixelMaeResult.append(pixelMae)
             pathResult.append(path)
+            bestImage.append(img)
             bestTargetDensity.append(target)
             bestOutputDensity.append(output)
         else:
@@ -112,6 +114,7 @@ def main():
                 bestMaeResult[indexOfMaxVal] = mae
                 bestPixelMaeResult[indexOfMaxVal] = pixelMae
                 pathResult[indexOfMaxVal] = path
+                bestImage[indexOfMaxVal] = img
                 bestTargetDensity[indexOfMaxVal] = target
                 bestOutputDensity[indexOfMaxVal] = output
     print ("AVG MAE : ",maeByCount.item()/len(paths))
@@ -121,7 +124,8 @@ def main():
         path = path[0]
         print(path)
         plt.figure()
-        plt.imshow(plt.imread(path))
+        # plt.imshow(plt.imread(path))
+        plt.imshow(bestImage[i])
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
@@ -133,7 +137,8 @@ def main():
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
         plt.show()
-                
+    plt.close('all')
+              
 def valManyImages():
     #defining the location of dataset
     #root = 'C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\'
