@@ -13,8 +13,6 @@ class listDataset(Dataset):
             # root = root *4
             root = root * duplicate
         random.shuffle(root)
-        print("Coba")
-        a = 1/0
         self.nSamples = len(root)
         self.lines = root
         self.transform = transform
@@ -34,7 +32,6 @@ class listDataset(Dataset):
         
         img_path = self.lines[index]
         
-        print("get item")
         img,target = load_data(img_path,self.train) if not self.isLargeSize  else load_data_large_size(img_path,self.train, self.isCrop)
         
         #img = 255.0 * F.to_tensor(img)
