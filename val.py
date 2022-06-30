@@ -77,6 +77,9 @@ def main():
     bestImage = []
     bestTargetDensity = []
     bestOutputDensity = []
+    bestOutputSum = []
+    bestTargetSum = []
+    
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
     if args.pre:
         if os.path.isfile(args.pre):
@@ -123,6 +126,8 @@ def main():
             bestImage.append(img)
             bestTargetDensity.append(target)
             bestOutputDensity.append(output)
+            bestOutputSum.append(output.data.sum())
+            bestTargetSum.append(toDevice(target.sum().type(torch.FloatTensor)))
         else:
             indexOfMaxVal = bestMaeResult.index(max(bestMaeResult)) 
             if mae < max(bestMaeResult):
@@ -132,12 +137,19 @@ def main():
                 bestImage[indexOfMaxVal] = img
                 bestTargetDensity[indexOfMaxVal] = target
                 bestOutputDensity[indexOfMaxVal] = output
+                bestOutputSum[indexOfMaxVal] = output.data.sum()
+                bestTargetSum[indexOfMaxVal] = toDevice(target.sum().type(torch.FloatTensor))
+                
     print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     print("Original Image - Target Density Map - Predicted Density Map")
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
+        print("Output Sum: ", bestOutputSum[i])
+        print("Target Sum: ", bestTargetSum[i])
+        print("BASED COUNT MAE: ", bestMaeResult[i])
+        print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
         plt.figure()
         img = bestImage[i].detach().cpu()
         img = convertRGBShape(img)
