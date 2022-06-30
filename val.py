@@ -118,14 +118,15 @@ def main():
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        showPlot(plt.imshow(plt.imread(path)))
+        # showPlot(plt.imshow(plt.imread(path)))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        showPlot(plt.imshow(temp,cmap = cm.jet))
+        # showPlot(plt.imshow(temp,cmap = cm.jet))
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
         showPlot(plt.imshow(temp,cmap = cm.jet))
         plt.show()
+        break
                 
 def valManyImages():
     #defining the location of dataset
