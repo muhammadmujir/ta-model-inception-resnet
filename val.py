@@ -50,6 +50,18 @@ def toDevice(tens):
     else:
         tens = tens.cpu()
     return tens
+
+def convertRGBShape(img):
+    # input shape: (1,3,width,height)
+    # return shape: (height,width,3)
+    matrix = []
+    for i in range(img.shape[2]):
+        row = []
+        for j in range(img.shape[3]):
+            point = [img[0][0][i][j],img[0][1][i][j],img[0][2][i][j]]
+            row.append(point)
+        matrix.append(row)
+    return np.array(matrix)
     
 def main():
     global args
@@ -123,11 +135,9 @@ def main():
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        # print("SHAPE: ", plt.imread(path).shape)
         plt.figure()
-        # plt.imshow(plt.imread(path))
         img = bestImage[i].detach().cpu()
-        img = img.reshape(img.shape[3], img.shape[2], img.shape[1])
+        img = convertRGBShape(img)
         plt.imshow(img)
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
