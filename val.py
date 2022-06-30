@@ -63,11 +63,11 @@ def main():
         gt_file = h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'),'r')
         groundtruth = np.asarray(gt_file['density'])
         output = model(img.unsqueeze(0))
-        if (isCudaAvailable):
-            mae = abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
-        else:
-            mae = abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
-        
+        # if (isCudaAvailable):
+        #     mae = abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
+        # else:
+        #     mae = abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
+        mae = abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
         maeByCount += mae
         pixelMae = maeCriterion(output, groundtruth).item()
         maeByPixel += pixelMae
