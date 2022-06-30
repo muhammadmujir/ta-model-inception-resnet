@@ -70,7 +70,7 @@ def main():
                    ]),  train=False),
     batch_size=1)
     
-    for (img, target, path) in enumerate(test_loader):
+    for i,(img, target, path) in enumerate(test_loader):
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
