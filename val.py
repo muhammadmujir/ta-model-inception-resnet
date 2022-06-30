@@ -90,6 +90,7 @@ def main():
     batch_size=1)
     
     for i,(img, target, path) in enumerate(test_loader):
+        print("PATH: ", path)
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
