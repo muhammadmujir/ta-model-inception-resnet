@@ -72,6 +72,7 @@ def load_data_large_size(img_path, train = True, crop=True):
     img = img.resize((img_w,img_h))
     
     if crop:
+        print("CROP")
         crop_size = (512,512)
         if random.randint(0,9) <= -1:
             dx = int(random.randint(0,1)*(img.size[0] - crop_size[0]))
