@@ -112,6 +112,7 @@ def main():
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
         plt.imshow(temp,cmap = cm.jet)
         outputDensity = bestOutputDensity[i].detach().cpu()
+        outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
         plt.imshow(temp,cmap = cm.jet)
         plt.show()
