@@ -29,17 +29,22 @@ import torch
 import torch.nn as nn
 import argparse
 from torch.autograd import Variable
+from dataloader import DataLoader
+import dataset
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', metavar='BEST_RESULT_COUNT', help='best result count')
+args = parser.parse_args()
 
-transform=transforms.Compose([
-                      transforms.ToTensor(),transforms.Normalize(
-                          mean=[0.485, 0.456, 0.406],
-                          std=[0.229, 0.224, 0.225]),
-                  ])
+def toDevice(tens):
+    global args
+    if args.gpu != 'None':
+        tens = tens.cuda()
+    else:
+        tens = tens.cpu()
+    return tens
 
 def main():
     args = parser.parse_args()
@@ -55,28 +60,25 @@ def main():
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
-    
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
-    for path in paths:
-        if (isCudaAvailable):
-            img = transform(Image.open(path).convert('RGB')).cuda()
-        else:
-            img = transform(Image.open(path).convert('RGB')).cpu()
-        gt_file = h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'),'r')
-        groundtruth = np.asarray(gt_file['density'])
-        if isCudaAvailable:
-            groundtruth = groundtruth.type(torch.FloatTensor).unsqueeze(0).cuda()
-        else:
-            groundtruth = groundtruth.type(torch.FloatTensor).unsqueeze(0).cpu()
-        groundtruth = Variable(groundtruth)
-        output = model(img.unsqueeze(0))
-        # if (isCudaAvailable):
-        #     mae = abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
-        # else:
-        #     mae = abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
-        mae = abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
+    test_loader = DataLoader(
+    dataset.listDataset(paths,
+                   shuffle=False,
+                   transform=transforms.Compose([
+                       transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225]),
+                   ]),  train=False),
+    batch_size=1)
+    
+    for (img, target, path) in enumerate(test_loader):
+        img = toDevice(img)
+        img = Variable(img)
+        output = model(img)
+        target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
+        target = Variable(target)
+        mae = abs(output.data.sum()-toDevice(target.sum().type(torch.FloatTensor)))
         maeByCount += mae
-        pixelMae = maeCriterion(output, groundtruth).item()
+        pixelMae = maeCriterion(output, target).item()
         maeByPixel += pixelMae
         
         if len(bestMaeResult) < best_result_count-1:
@@ -98,11 +100,8 @@ def main():
         plt.imshow(plt.imread(path))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
         plt.imshow(temp,cmap = cm.jet)
-        if isCudaAvailable:
-            outputDensity = bestOutputDensity[i].detach().cuda()
-        else:
-            outputDensity = bestOutputDensity[i].detach().cpu()
-        temp = np.asarray(outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3]))
+        outputDensity = toDevice(bestOutputDensity[i].detach())
+        temp = np.asarray(outputDensity)
         plt.imshow(temp,cmap = cm.jet)
         plt.show()
                 
@@ -146,12 +145,12 @@ def valManyImages():
         else:
             img = transform(Image.open(img_paths[i]).convert('RGB')).cpu()
         gt_file = h5py.File(img_paths[i].replace('.jpg','.h5').replace('images','ground-truth'),'r')
-        groundtruth = np.asarray(gt_file['density'])
+        target = np.asarray(gt_file['density'])
         output = model(img.unsqueeze(0))
         if (isCudaAvailable):
-            mae += abs(output.detach().cuda().sum().numpy()-np.sum(groundtruth))
+            mae += abs(output.detach().cuda().sum().numpy()-np.sum(target))
         else:
-            mae += abs(output.detach().cpu().sum().numpy()-np.sum(groundtruth))
+            mae += abs(output.detach().cpu().sum().numpy()-np.sum(target))
     print ("MAE : ",mae/len(img_paths))
 
 def valSingleImage():
