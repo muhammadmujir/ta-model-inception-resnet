@@ -16,7 +16,7 @@ class listDataset(Dataset):
             # root = root *4
             root = root * duplicate
         random.shuffle(root)
-        
+        print("Coba")
         self.nSamples = len(root)
         self.lines = root
         self.transform = transform
