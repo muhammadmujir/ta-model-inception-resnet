@@ -120,14 +120,14 @@ def main():
         plt.figure()
         plt.imshow(plt.imread(path))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        plt.figure()
-        plt.imshow(temp,cmap = cm.jet)
+        # plt.figure()
+        # plt.imshow(temp,cmap = cm.jet)
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
-        plt.figure()
-        plt.imshow(temp,cmap = cm.jet)
-        plt.show()
+        # plt.figure()
+        # plt.imshow(temp,cmap = cm.jet)
+        # plt.show()
                 
 def valManyImages():
     #defining the location of dataset
