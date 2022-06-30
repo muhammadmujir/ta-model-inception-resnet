@@ -9,7 +9,8 @@ import numpy as np
 
 def main():
     painting=plt.imread("https://www.freepnglogos.com/uploads/server-png/home-server-icon-icons-and-png-backgrounds-30.png")
-    for i in range(2):
+    for i in range(4):
+        print(i)
         plt.figure()
         plt.imshow(painting)
       
