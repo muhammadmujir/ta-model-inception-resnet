@@ -37,7 +37,7 @@ parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing imag
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
-parser.add_argument('--is_crop',metavar='IS_CROP', type=bool, help='option to crop image')
+parser.add_argument('--crop',metavar='IS_CROP', type=bool, help='option to crop image')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
 
@@ -74,7 +74,7 @@ def main():
             print("=> no checkpoint found at '{}'".format(args.pre))
     else:
         print("Checkpoint Not Set")     
-    print("COBA: ", args.is_crop)
+    print("COBA: ", args.crop)
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
@@ -82,7 +82,7 @@ def main():
     dataset.listDataset(paths,
                    shuffle=False,
                    isLargeSize=args.is_large_file,
-                   isCrop=args.is_crop,
+                   isCrop=args.crop,
                    transform=transforms.Compose([
                        transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225]),
