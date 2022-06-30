@@ -77,6 +77,10 @@ def main():
             model.load_state_dict(checkpoint['state_dict'])
             print("=> loaded checkpoint '{}' (epoch {})"
                   .format(args.pre, checkpoint['epoch']))
+        else:
+            print("=> no checkpoint found at '{}'".format(args.pre))
+    else:
+        print("Argument Not set")        
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
