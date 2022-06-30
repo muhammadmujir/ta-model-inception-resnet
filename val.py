@@ -37,7 +37,7 @@ parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing imag
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
-parser.add_argument('--crop', -c, metavar='IS_CROP', type=bool, help='option to crop image')
+parser.add_argument('--crop', '-c', metavar='IS_CROP', type=bool, help='option to crop image')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
 
