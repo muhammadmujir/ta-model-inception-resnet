@@ -37,6 +37,8 @@ parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing imag
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
+parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
+                    help='path to the pretrained model')
 args = parser.parse_args()
 
 def toDevice(tens):
@@ -58,6 +60,13 @@ def main():
     pathResult = []
     bestOutputDensity = []
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
+    if args.pre:
+        if os.path.isfile(args.pre):
+            print("=> loading checkpoint '{}'".format(args.pre))
+            checkpoint = torch.load(args.pre)
+            model.load_state_dict(checkpoint['state_dict'])
+            print("=> loaded checkpoint '{}' (epoch {})"
+                  .format(args.pre, checkpoint['epoch']))
     model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
@@ -94,7 +103,7 @@ def main():
                 bestPixelMaeResult[indexOfMaxVal] = pixelMae
                 pathResult[indexOfMaxVal] = path
                 bestOutputDensity[indexOfMaxVal] = output
-    print ("AVG MAE : ",maeByCount/len(paths))
+    print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     for (i, path) in enumerate(pathResult):
         print(path)
