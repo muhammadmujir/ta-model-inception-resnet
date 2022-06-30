@@ -125,7 +125,7 @@ def main():
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
         showPlot(plt.imshow(temp,cmap = cm.jet))
-        # plt.show()
+        plt.show()
                 
 def valManyImages():
     #defining the location of dataset
