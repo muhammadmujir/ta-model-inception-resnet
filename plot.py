@@ -13,6 +13,7 @@ def main():
         print(i)
         plt.figure()
         plt.imshow(painting)
+        plt.show()
       
 if __name__ == '__main__' :
     main()
