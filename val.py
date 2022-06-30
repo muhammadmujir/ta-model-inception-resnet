@@ -141,7 +141,7 @@ def main():
         plt.figure()
         img = bestImage[i].detach().cpu()
         img = convertRGBShape(img)
-        plt.imshow(img)
+        plt.imshow(img.astype('uint8'))
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
