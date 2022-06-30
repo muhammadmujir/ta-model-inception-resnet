@@ -36,6 +36,7 @@ parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
+parser.add_argument('print_freq', type=int, default=50, metavar='PRINT_FREQ', help='print frequency')
 parser.add_argument('--large-file', action='store_true', help='enable resize and crop for large file')
 parser.add_argument('--crop', action='store_true', help='option to crop image')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
@@ -103,6 +104,8 @@ def main():
     batch_size=1)
     
     for i,(img, target, path) in enumerate(test_loader):
+        if i % args.print_freq == 0:
+            print("Iterasi {} : {}".format(i,path))
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
