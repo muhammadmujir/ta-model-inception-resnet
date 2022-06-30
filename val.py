@@ -125,7 +125,7 @@ def main():
         print(path)
         plt.figure()
         # plt.imshow(plt.imread(path))
-        plt.imshow(bestImage[i])
+        plt.imshow(bestImage[i].detach().cpu())
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
