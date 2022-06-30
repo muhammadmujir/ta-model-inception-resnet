@@ -37,9 +37,13 @@ parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing imag
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('is_large_file',metavar='IS_LARGE_FILE', type=bool, help='enable resize and crop for large file')
+parser.add_argument('is_run_colab',metavar='IS_RUN_COLAB', type=bool, help='determine the library to show plt.imshow()')
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
+
 args = parser.parse_args()
+if args.is_run_colab:
+    from google.colab.patches import cv2_imshow
 
 def toDevice(tens):
     global args
@@ -49,7 +53,12 @@ def toDevice(tens):
         tens = tens.cpu()
     return tens
 
+def showPlot(image):
+    if args.is_run_colab:
+        cv2_imshow(image)
+    
 def main():
+    global args
     img_path = args.img_path
     best_result_count = args.best_result_count
     isCudaAvailable = True if args.gpu != 'None' else False 
@@ -108,13 +117,13 @@ def main():
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        plt.imshow(plt.imread(path))
+        showPlot(plt.imshow(plt.imread(path)))
         temp = np.asarray(h5py.File(path.replace('.jpg','.h5').replace('images','ground_truth'), 'r')['density'])
-        plt.imshow(temp,cmap = cm.jet)
+        showPlot(plt.imshow(temp,cmap = cm.jet))
         outputDensity = bestOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
-        plt.imshow(temp,cmap = cm.jet)
+        showPlot(plt.imshow(temp,cmap = cm.jet))
         plt.show()
                 
 def valManyImages():
