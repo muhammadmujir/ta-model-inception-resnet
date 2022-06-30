@@ -123,12 +123,12 @@ def main():
     for (i, path) in enumerate(pathResult):
         path = path[0]
         print(path)
-        print("SHAPE: ", plt.imread(path).shape)
-        # plt.figure()
+        # print("SHAPE: ", plt.imread(path).shape)
+        plt.figure()
         # plt.imshow(plt.imread(path))
-        # img = bestImage[i].detach().cpu()
-        # img = img.reshape(img.shape[2], img.shape[3])
-        # plt.imshow(img)
+        img = bestImage[i].detach().cpu()
+        img = img.reshape(img.shape[2], img.shape[3], img.shape[1])
+        plt.imshow(img)
         targetDensity = bestTargetDensity[i].detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
