@@ -8,10 +8,7 @@ from image import *
 import torchvision.transforms.functional as F
 
 class listDataset(Dataset):
-    def __init__(self, root, duplicate = 1, shape=None, 
-                 shuffle=True, transform=None,  train=False, 
-                 seen=0, batch_size=1, num_workers=4, isLargeSize=False, 
-                 isCrop=True):
+    def __init__(self, root, duplicate = 1, shape=None, shuffle=True, transform=None,  train=False, seen=0, batch_size=1, num_workers=4, isLargeSize=False, isCrop=True):
         if train:
             # root = root *4
             root = root * duplicate
