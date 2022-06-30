@@ -52,6 +52,7 @@ def main():
     pathResult = []
     bestOutputDensity = []
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
+    model.eval()
     maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
