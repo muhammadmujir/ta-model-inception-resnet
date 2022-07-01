@@ -116,7 +116,8 @@ def main():
             else:
                 checkpoint = torch.load(args.pre, map_location=torch.device('cpu'))
             args.start_epoch = checkpoint['epoch']
-            best_prec1 = checkpoint['best_prec1']
+            # best_prec1 = checkpoint['best_prec1']
+            best_prec1 = 150.0
             model.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             print("=> loaded checkpoint '{}' (epoch {})"
@@ -270,7 +271,7 @@ def validate(val_list, model, criterion):
     resultCSV.write('%s;' % str(maeLossByCount.avg.item()).replace(".", ",",1))
     resultCSV.write('%s;' % str(math.sqrt(mseLossByCount.avg)).replace(".", ",",1))
     resultCSV.write('\n')
-    return maeLoss.avg    
+    return maeLossByCount.avg.item()   
 
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
