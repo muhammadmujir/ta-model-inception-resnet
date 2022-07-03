@@ -32,7 +32,6 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
 from image import *
-import torch
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -93,6 +92,7 @@ def main():
     # bestTargetSum = []
     # worstOutputSum = []
     # worstTargetSum = []
+    transform = transforms.Compose([transforms.ToTensor()])
     
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
     if args.pre:
@@ -186,12 +186,12 @@ def main():
         print(path)
         # img = bestImage[i].detach().cpu()
         img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1])
-        print("Output Sum: ", bestOutputDensity[i].data.sum())
+        print("Output Sum: ", bestOutputDensity[i].data.sum().item())
         print("Target Sum: ", target.sum())
         print("BASED COUNT MAE: ", bestMaeResult[i])
         print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
         plt.figure()        
-        img = torch.tensor(img)
+        img = transform(img)
         img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
@@ -214,12 +214,12 @@ def main():
         print(path)
         # img = bestImage[i].detach().cpu()
         img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1])
-        print("Output Sum: ", worstOutputDensity[i].data.sum())
+        print("Output Sum: ", worstOutputDensity[i].data.sum().item())
         print("Target Sum: ", target.sum())
         print("BASED COUNT MAE: ", worstMaeResult[i])
         print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
         plt.figure()     
-        img = torch.tensor(img)
+        img = transform(img)
         img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
