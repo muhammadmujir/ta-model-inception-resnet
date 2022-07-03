@@ -31,6 +31,7 @@ import argparse
 from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
+from image import *
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -71,14 +72,26 @@ def main():
     isCudaAvailable = True if args.gpu != 'None' else False 
     maeByCount = 0.0
     maeByPixel = 0.0
+    
+    pathBestResult = []
+    cropBestResult = []
+    pathWorstResult = []
+    cropWorstResult = []
+    
     bestMaeResult = []
+    worstMaeResult = []
     bestPixelMaeResult = []
-    pathResult = []
-    bestImage = []
-    bestTargetDensity = []
+    worstPixelMaeResult = []
+    
+    # bestImage = []
+    # bestTargetDensity = []
     bestOutputDensity = []
-    bestOutputSum = []
-    bestTargetSum = []
+    worstOutputDensity = []
+    
+    # bestOutputSum = []
+    # bestTargetSum = []
+    # worstOutputSum = []
+    # worstTargetSum = []
     
     model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
     if args.pre:
@@ -106,7 +119,7 @@ def main():
                    ]),  train=False),
     batch_size=1)
     
-    for i,(img, target, path) in enumerate(test_loader):
+    for i,(img, target, path, dx, dy) in enumerate(test_loader):
         if i % args.print_freq == 0:
             print("Iterasi {} : {}".format(i,path))
         img = toDevice(img)
@@ -120,46 +133,100 @@ def main():
         maeByPixel += pixelMae
         
         if len(bestMaeResult) < best_result_count:
+            pathBestResult.append(path)
+            cropBestResult.append((dx,dy))
             bestMaeResult.append(mae)
             bestPixelMaeResult.append(pixelMae)
-            pathResult.append(path)
-            bestImage.append(img)
-            bestTargetDensity.append(target)
+            # bestImage.append(img)
+            # bestTargetDensity.append(target)
             bestOutputDensity.append(output)
-            bestOutputSum.append(output.data.sum())
-            bestTargetSum.append(toDevice(target.sum().type(torch.FloatTensor)))
+            # bestOutputSum.append(output.data.sum())
+            # bestTargetSum.append(toDevice(target.sum().type(torch.FloatTensor)))
         else:
-            indexOfMaxVal = bestMaeResult.index(max(bestMaeResult)) 
+            indexOfMaxMae = bestMaeResult.index(max(bestMaeResult)) 
             if mae < max(bestMaeResult):
-                bestMaeResult[indexOfMaxVal] = mae
-                bestPixelMaeResult[indexOfMaxVal] = pixelMae
-                pathResult[indexOfMaxVal] = path
-                bestImage[indexOfMaxVal] = img
-                bestTargetDensity[indexOfMaxVal] = target
-                bestOutputDensity[indexOfMaxVal] = output
-                bestOutputSum[indexOfMaxVal] = output.data.sum()
-                bestTargetSum[indexOfMaxVal] = toDevice(target.sum().type(torch.FloatTensor))
+                pathBestResult[indexOfMaxMae] = path
+                cropBestResult[indexOfMaxMae] = (dx,dy)
+                bestMaeResult[indexOfMaxMae] = mae
+                bestPixelMaeResult[indexOfMaxMae] = pixelMae
+                # bestImage[indexOfMaxMae] = img
+                # bestTargetDensity[indexOfMaxMae] = target
+                bestOutputDensity[indexOfMaxMae] = output
+                # bestOutputSum[indexOfMaxMae] = output.data.sum()
+                # bestTargetSum[indexOfMaxMae] = toDevice(target.sum().type(torch.FloatTensor))
+                
+        if len(pathWorstResult) < best_result_count:
+            pathWorstResult.append(path)
+            cropWorstResult.append((dx,dy))
+            worstMaeResult.append(mae)
+            worstPixelMaeResult.append(pixelMae)
+            worstOutputDensity.append(output)
+            # worstOutputSum.append(output.data.sum())
+            # worstTargetSum.append(toDevice(target.sum().type(torch.FloatTensor)))
+        else:
+            indexOfMinMae = worstMaeResult.index(min(worstMaeResult))
+            if mae > min(worstMaeResult):
+                pathWorstResult[indexOfMinMae] = path
+                cropWorstResult[indexOfMinMae] = (dx,dy)
+                worstMaeResult[indexOfMinMae] = mae
+                worstPixelMaeResult[indexOfMinMae] = pixelMae
+                worstOutputDensity[indexOfMinMae] = output
+                # worstOutputSum[indexOfMinMae] = output.data.sum()
+                # worstTargetSum[indexOfMinMae] = toDevice(target.sum().type(torch.FloatTensor))
+        
                 
     print ("AVG MAE : ",maeByCount.item()/len(paths))
     print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     print("Original Image - Target Density Map - Predicted Density Map")
-    for (i, path) in enumerate(pathResult):
+    
+    print("---------------------------Best-----------------------------")
+    for (i, path) in enumerate(pathBestResult):
         path = path[0]
         print(path)
-        print("Output Sum: ", bestOutputSum[i])
-        print("Target Sum: ", bestTargetSum[i])
+        # img = bestImage[i].detach().cpu()
+        img, target, path, dx, dy = load_data(pathBestResult[i], isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1]) if not args.large_file else load_data_ucf(pathBestResult[i], isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1])
+        print("Output Sum: ", bestOutputDensity[i].data.sum())
+        print("Target Sum: ", toDevice(target.sum().type(torch.FloatTensor)))
         print("BASED COUNT MAE: ", bestMaeResult[i])
         print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
-        plt.figure()
-        img = bestImage[i].detach().cpu()
+        plt.figure()        
+        img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
-        targetDensity = bestTargetDensity[i].detach().cpu()
+        # targetDensity = bestTargetDensity[i].detach().cpu()
+        targetDensity = target.detach().cpu()
         targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
         temp = np.asarray(targetDensity)
         plt.figure()
         plt.imshow(temp,cmap = cm.jet)
         outputDensity = bestOutputDensity[i].detach().cpu()
+        outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
+        temp = np.asarray(outputDensity)
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
+        plt.show()
+    
+    print("---------------------------Worst-----------------------------")
+    for (i, path) in enumerate(pathWorstResult):
+        path = path[0]
+        print(path)
+        # img = bestImage[i].detach().cpu()
+        img, target, path, dx, dy = load_data(pathWorstResult[i], isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1]) if not args.large_file else load_data_ucf(pathWorstResult[i], isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1])
+        print("Output Sum: ", worstOutputDensity[i].data.sum())
+        print("Target Sum: ", toDevice(target.sum().type(torch.FloatTensor)))
+        print("BASED COUNT MAE: ", worstMaeResult[i])
+        print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
+        plt.figure()        
+        img = img.detach().cpu()
+        img = convertRGBShape(img)
+        plt.imshow(img.astype('uint8'))
+        # targetDensity = bestTargetDensity[i].detach().cpu()
+        targetDensity = target.detach().cpu()
+        targetDensity = targetDensity.reshape(targetDensity.shape[2], targetDensity.shape[3])
+        temp = np.asarray(targetDensity)
+        plt.figure()
+        plt.imshow(temp,cmap = cm.jet)
+        outputDensity = worstOutputDensity[i].detach().cpu()
         outputDensity = outputDensity.reshape(outputDensity.shape[2], outputDensity.shape[3])
         temp = np.asarray(outputDensity)
         plt.figure()

@@ -169,7 +169,7 @@ def train(train_list, model, criterion, optimizer, epoch):
     model.train()
     end = time.time()
     
-    for i,(img, target, path) in enumerate(train_loader):
+    for i,(img, target, path, dx, dy) in enumerate(train_loader):
         data_time.update(time.time() - end)
         
         if args.gpu != 'None':
@@ -228,7 +228,7 @@ def validate(val_list, model, criterion):
     maeLoss = AverageMeter()
     mseLoss = AverageMeter()
     
-    for i,(img, target, path) in enumerate(test_loader):
+    for i,(img, target, path, dx, dy) in enumerate(test_loader):
         if args.gpu != 'None':
             img = img.cuda()
         else:
