@@ -32,6 +32,7 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
 from image import *
+import torch
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -190,6 +191,8 @@ def main():
         print("BASED COUNT MAE: ", bestMaeResult[i])
         print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
         plt.figure()        
+        img = torch.tensor(img)
+        img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
         # targetDensity = bestTargetDensity[i].detach().cpu()
@@ -215,7 +218,9 @@ def main():
         print("Target Sum: ", target.sum())
         print("BASED COUNT MAE: ", worstMaeResult[i])
         print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
-        plt.figure()        
+        plt.figure()     
+        img = torch.tensor(img)
+        img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
         # targetDensity = bestTargetDensity[i].detach().cpu()
