@@ -184,7 +184,7 @@ def main():
         path = path[0]
         print(path)
         # img = bestImage[i].detach().cpu()
-        img, target, path, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1])
+        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1])
         print("Output Sum: ", bestOutputDensity[i].data.sum())
         print("Target Sum: ", toDevice(target.sum().type(torch.FloatTensor)))
         print("BASED COUNT MAE: ", bestMaeResult[i])
@@ -211,7 +211,7 @@ def main():
         path = path[0]
         print(path)
         # img = bestImage[i].detach().cpu()
-        img, target, path, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1])
+        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1])
         print("Output Sum: ", worstOutputDensity[i].data.sum())
         print("Target Sum: ", toDevice(target.sum().type(torch.FloatTensor)))
         print("BASED COUNT MAE: ", worstMaeResult[i])
