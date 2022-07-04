@@ -135,7 +135,7 @@ def main():
         
         if len(bestMaeResult) < best_result_count:
             pathBestResult.append(path)
-            cropBestResult.append((dx,dy))
+            cropBestResult.append((dx.item(),dy.item()))
             bestMaeResult.append(mae)
             bestPixelMaeResult.append(pixelMae)
             # bestImage.append(img)
@@ -147,7 +147,7 @@ def main():
             indexOfMaxMae = bestMaeResult.index(max(bestMaeResult)) 
             if mae < max(bestMaeResult):
                 pathBestResult[indexOfMaxMae] = path
-                cropBestResult[indexOfMaxMae] = (dx,dy)
+                cropBestResult[indexOfMaxMae] = (dx.item(),dy.item())
                 bestMaeResult[indexOfMaxMae] = mae
                 bestPixelMaeResult[indexOfMaxMae] = pixelMae
                 # bestImage[indexOfMaxMae] = img
@@ -158,7 +158,7 @@ def main():
                 
         if len(pathWorstResult) < best_result_count:
             pathWorstResult.append(path)
-            cropWorstResult.append((dx,dy))
+            cropWorstResult.append((dx.item(),dy.item()))
             worstMaeResult.append(mae)
             worstPixelMaeResult.append(pixelMae)
             worstOutputDensity.append(output)
@@ -168,7 +168,7 @@ def main():
             indexOfMinMae = worstMaeResult.index(min(worstMaeResult))
             if mae > min(worstMaeResult):
                 pathWorstResult[indexOfMinMae] = path
-                cropWorstResult[indexOfMinMae] = (dx,dy)
+                cropWorstResult[indexOfMinMae] = (dx.item(),dy.item())
                 worstMaeResult[indexOfMinMae] = mae
                 worstPixelMaeResult[indexOfMinMae] = pixelMae
                 worstOutputDensity[indexOfMinMae] = output
