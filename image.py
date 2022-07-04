@@ -119,18 +119,18 @@ def load_data_ucf(img_path,train = True, isCrop = False, isFlip = False, dx = No
     
     if isCrop:
         if img.size[0] >= 2000 or img.size[1] >= 2000:
-            crop_size = (int(img.size[0]*0.6),int(img.size[1]*0.6))
+            crop_size = (int(img.size[0]*0.5),int(img.size[1]*0.5))
             if dx == None and dy == None:
-                dx = int(random.random()*img.size[0]*0.4)
-                dy = int(random.random()*img.size[1]*0.4)
+                dx = int(random.random()*img.size[0]*0.5)
+                dy = int(random.random()*img.size[1]*0.5)
             img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
             target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
         
         else:
-            crop_size = (int(img.size[0]*0.7),int(img.size[1]*0.7))
+            crop_size = (int(img.size[0]*0.6),int(img.size[1]*0.6))
             if dx == None and dy == None:
-                dx = int(random.random()*img.size[0]*0.3)
-                dy = int(random.random()*img.size[1]*0.3)
+                dx = int(random.random()*img.size[0]*0.4)
+                dy = int(random.random()*img.size[1]*0.4)
             img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
             target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
     
