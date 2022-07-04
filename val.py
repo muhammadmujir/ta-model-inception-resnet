@@ -185,7 +185,7 @@ def main():
         path = path[0]
         print(path)
         # img = bestImage[i].detach().cpu()
-        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[0], dy=cropBestResult[1])
+        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1])
         print("Output Sum: ", bestOutputDensity[i].data.sum().item())
         print("Target Sum: ", target.sum())
         print("BASED COUNT MAE: ", bestMaeResult[i].item())
@@ -211,7 +211,7 @@ def main():
         path = path[0]
         print(path)
         # img = bestImage[i].detach().cpu()
-        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[0], dy=cropWorstResult[1])
+        img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[i][0], dy=cropWorstResult[i][1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[i][0], dy=cropWorstResult[i][1])
         print("Output Sum: ", worstOutputDensity[i].data.sum().item())
         print("Target Sum: ", target.sum())
         print("BASED COUNT MAE: ", worstMaeResult[i].item())
