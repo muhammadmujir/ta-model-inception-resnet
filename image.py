@@ -12,7 +12,7 @@ def load_data(img_path,train = True, isCrop = False, isFlip = False, dx = None, 
     gt_file = h5py.File(gt_path)
     target = np.asarray(gt_file['density'])
     if isCrop:
-        crop_size = (img.size[0]/2,img.size[1]/2)
+        crop_size = (int(img.size[0]/2),int(img.size[1]/2))
         if dx == None and dy == None:
             if random.randint(0,9)<= -1:
                 dx = int(random.randint(0,1)*img.size[0]*1./2)
