@@ -54,13 +54,13 @@ def toDevice(tens):
     return tens
 
 def convertRGBShape(img):
-    # input shape: (1,3,width,height)
+    # input shape: (3,width,height)
     # return shape: (height,width,3)
     matrix = []
-    for i in range(img.shape[2]):
+    for i in range(img.shape[1]):
         row = []
-        for j in range(img.shape[3]):
-            point = [img[0][0][i][j],img[0][1][i][j],img[0][2][i][j]]
+        for j in range(img.shape[2]):
+            point = [img[0][i][j],img[1][i][j],img[2][i][j]]
             row.append(point)
         matrix.append(row)
     return np.array(matrix)
@@ -192,7 +192,6 @@ def main():
         print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
         plt.figure()        
         img = Variable(toDevice(transform(img)))
-        print("Shape: ", img.shape)
         img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
