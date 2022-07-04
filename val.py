@@ -197,8 +197,6 @@ def main():
         plt.imshow(img.astype('uint8'))
         # targetDensity = bestTargetDensity[i].detach().cpu()
         # targetDensity = target.detach().cpu()
-        target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
-        target = Variable(target)
         print("Shape: ", target.shape)
         targetDensity = target.reshape(target.shape[2], target.shape[3])
         temp = np.asarray(targetDensity)
