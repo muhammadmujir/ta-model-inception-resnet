@@ -34,7 +34,7 @@ def load_data(img_path,train = True, isCrop = False, isFlip = False, dx = None, 
     
     if isCrop:
         return img,target,dx,dy
-    return img,target,None,None
+    return img,target,0,0
 
 def cal_new_size(im_h, im_w, min_size, max_size):
     if im_h < im_w:
