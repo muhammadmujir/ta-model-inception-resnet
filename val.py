@@ -193,6 +193,8 @@ def main():
         plt.figure()        
         img = Variable(toDevice(transform(img)))
         img = img.detach().cpu()
+        print(img)
+        break
         print("Before Shape: ", img.shape)
         img = convertRGBShape(img)
         print("After Shape: ", img.shape)
