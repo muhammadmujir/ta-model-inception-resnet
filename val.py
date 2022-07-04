@@ -192,6 +192,7 @@ def main():
         print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
         plt.figure()        
         img = Variable(toDevice(transform(img)))
+        print("Shape: ", img.shape)
         img = img.detach().cpu()
         img = convertRGBShape(img)
         plt.imshow(img.astype('uint8'))
