@@ -21,9 +21,8 @@ def load_data(img_path,train = True, isCrop = False, isFlip = False, dx = None, 
                 dx = int(random.random()*img.size[0]*1./2)
                 dy = int(random.random()*img.size[1]*1./2)
         
-        print("DX: ", dx)
-        # img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
-        # target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
+        img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
+        target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
         
         if isFlip:
             if random.random()>0.8:
