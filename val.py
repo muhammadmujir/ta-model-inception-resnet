@@ -218,7 +218,7 @@ def main():
         img = Variable(toDevice(transform(img)))
         img = img.detach().cpu()
         img = convertRGBShape(img)
-        plt.imshow(img.astype('uint8'))
+        plt.imshow(img)
         plt.figure()
         plt.imshow(target,cmap = cm.jet)
         outputDensity = worstOutputDensity[i].detach().cpu()
