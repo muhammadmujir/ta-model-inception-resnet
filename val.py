@@ -281,11 +281,27 @@ def valManyImages():
             mae += abs(output.detach().cpu().sum().numpy()-np.sum(target))
     print ("MAE : ",mae/len(img_paths))
 
-def valSingleImage():
+def valSingleImage(modelPath, imgPath, usingCuda = False):
     # prediction on single image
     from matplotlib import cm as c
-    img = transform(Image.open('C:\\Users\\Admin\\Desktop\\Kuliah\\TA\\ShanghaiTech\\part_B\\test_data\\images\\IMG_1.jpg').convert('RGB')).cpu()
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        ),
+    ])
+    model = CSRNet(load_weights=True).cuda() if usingCuda else CSRNet(load_weights=True).cpu()
+    if os.path.isfile(modelPath):
+       print("=> loading checkpoint '{}'".format(modelPath))
+       checkpoint = torch.load(modelPath, map_location=torch.device('cpu'))
+       model.load_state_dict(checkpoint['state_dict'])
+       print("=> loaded checkpoint '{}' (epoch {})"
+             .format(modelPath, checkpoint['epoch']))
+    else:
+       print("=> no checkpoint found at '{}'".format(modelPath))
     
+    img = transform(Image.open(imgPath).convert('RGB')).cpu()
     output = model(img.unsqueeze(0))
     print("Predicted Count : ",int(output.detach().cpu().sum().numpy()))
     temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
@@ -310,4 +326,5 @@ def checkSimilarity():
     plt.show()
 
 if __name__ == '__main__':
-    main() 
+    # main() 
+    valSingleImage("F:\\Backup\\TA\\Model\\model_best_partB.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\chiness_food\\Screenshot_10.png")
