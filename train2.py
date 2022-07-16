@@ -62,7 +62,7 @@ def main():
     
     args = parser.parse_args()
     args.original_lr = 1e-7
-    args.lr = 1e-7
+    args.lr = 1e-5
     # args.batch_size    = 1
     args.batch_size    = args.batch_size
     args.momentum      = 0.95
