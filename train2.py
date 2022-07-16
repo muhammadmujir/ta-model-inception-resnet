@@ -143,7 +143,7 @@ def main():
         else:
             resultCSV = open(os.path.join(resultPath, 'result.csv'), 'a')
             
-        adjust_learning_rate(optimizer, epoch)
+        # adjust_learning_rate(optimizer, epoch)
         train(train_list, model, criterion, optimizer, epoch)
         prec1 = validate(val_list, model, criterion)
         
