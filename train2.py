@@ -31,13 +31,12 @@ parser.add_argument('test_json', metavar='TEST',
                     help='path to test json')
 parser.add_argument('result_path', metavar='RESULT',
                     help='path to result')
-
 parser.add_argument('--pre', '-p', metavar='PRETRAINED', default=None,type=str,
                     help='path to the pretrained model')
-
+parser.add_argument('--lr', type=float, default=5e-8,
+                    help='the initial learning rate')
 parser.add_argument('gpu',metavar='GPU', type=str,
                     help='GPU id to use.')
-
 parser.add_argument('task',metavar='TASK', type=str,
                     help='task id to use.')
 
@@ -62,7 +61,6 @@ def main():
     
     args = parser.parse_args()
     args.original_lr = 1e-7
-    args.lr = 1e-5
     # args.batch_size    = 1
     args.batch_size    = args.batch_size
     args.momentum      = 0.95
@@ -80,12 +78,11 @@ def main():
     #     train_list = json.load(outfile)
     # with open(args.test_json, 'r') as outfile:       
     #     val_list = json.load(outfile)
-    
     train_list = glob.glob(os.path.join(args.train_json, '*.jpg'))
     val_list = glob.glob(os.path.join(args.test_json, '*.jpg'))
     resultPath = args.result_path
     
-    model = CSRNet()
+    model = CSRNet(load_weights=True)
     
     if args.gpu == 'TPU':
         import torch_xla
