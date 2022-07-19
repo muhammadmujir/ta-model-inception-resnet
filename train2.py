@@ -82,7 +82,7 @@ def main():
     val_list = glob.glob(os.path.join(args.test_json, '*.jpg'))
     resultPath = args.result_path
     
-    model = CSRNet(load_weights=True)
+    model = CSRNet(load_weights=False)
     
     if args.gpu == 'TPU':
         import torch_xla
