@@ -293,6 +293,10 @@ def valSingleImage(modelPath, imgPath, usingCuda = False):
         ),
     ])
     model = CSRNet(load_weights=True).cuda() if usingCuda else CSRNet(load_weights=True).cpu()
+    
+    # Wajib diset model.eval() ketika testing, jika tidak maka hasil akan sangat berbeda
+    model.eval()
+    
     if os.path.isfile(modelPath):
        print("=> loading checkpoint '{}'".format(modelPath))
        checkpoint = torch.load(modelPath, map_location=torch.device('cpu'))
