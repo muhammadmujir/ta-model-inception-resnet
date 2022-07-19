@@ -32,6 +32,7 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
 from image import *
+from utils import saveLargeListIntoCSV
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -307,6 +308,7 @@ def valSingleImage(modelPath, imgPath, usingCuda = False):
     temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
     plt.imshow(temp,cmap = c.jet)
     plt.show()
+    saveLargeListIntoCSV(temp, "C:\\Users\\Mujir\\Desktop\\foto\\terminal")
 
 def checkSimilarity():
     mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
@@ -327,4 +329,4 @@ def checkSimilarity():
 
 if __name__ == '__main__':
     # main() 
-    valSingleImage("F:\\Backup\\TA\\Model\\model_best_partB.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\chiness_food\\Screenshot_10.png")
+    valSingleImage("F:\\Backup\\TA\\Model\\model_best_partA_200epoch.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\terminal\\crop1.png")
