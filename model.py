@@ -77,8 +77,16 @@ class CSRNet(nn.Module):
         if not load_weights:
             mod = models.vgg16(pretrained = True)
             self._initialize_weights()
-            for i in range(len(self.frontend.state_dict().items())):
-                list(self.frontend.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+            totalLayer = len(self.frontend.state_dict().items()) + len(self.frontend2.state_dict().items()) + len(self.frontend3.state_dict().items())
+            breakPoint = [len(self.frontend.state_dict().items()), len(self.frontend.state_dict().items())+len(self.frontend2.state_dict().items())]
+            for i in range(totalLayer):
+                if i < breakPoint[0]:
+                    self.frontend.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                elif i < breakPoint[1]:
+                    self.frontend2.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                else:
+                    self.frontend3.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                    
     def forward(self,x):
         x = self.frontend(x)
         x_receptive_field_11 = self.frontend2(x)
@@ -90,6 +98,7 @@ class CSRNet(nn.Module):
         x = self.backend(x)
         x = self.output_layer(x)
         return x
+    
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
