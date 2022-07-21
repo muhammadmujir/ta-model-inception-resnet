@@ -96,7 +96,8 @@ class CSRNet(nn.Module):
         x_receptive_field_11 = self.frontend2(x)
         x = self.frontend3(x_receptive_field_11)
         x = self.intermediate(x)
-        x = F.upsample_bilinear(x, size=x_receptive_field_11.shape) + x_receptive_field_11
+        new_size = (x_receptive_field_11.shape[2],x_receptive_field_11.shape[3])
+        x = F.upsample_bilinear(x, size=new_size) + x_receptive_field_11
         x = self.backend(x)
         x = self.backend(x)
         x = self.backend(x)
