@@ -77,6 +77,7 @@ class CSRNet(nn.Module):
         if not load_weights:
             mod = models.vgg16(pretrained = True)
             self._initialize_weights()
+            print("LAYER: ", len(self.frontend.state_dict().items()))
             for i in range(len(self.frontend.state_dict().items())):
                 list(self.frontend.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
     def forward(self,x):
