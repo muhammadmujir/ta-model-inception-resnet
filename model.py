@@ -1,8 +1,7 @@
 import torch.nn as nn
 import torch
 from torchvision import models
-from utils import save_net,load_net
-
+    
 class BasicConv2d(nn.Module):
 
     def __init__(self, in_planes, out_planes, kernel_size, stride, padding=0):
@@ -25,7 +24,7 @@ class BasicConv2d(nn.Module):
 
 class Block35(nn.Module):
 
-    def __init__(self, scale=1.0, in_channel = 320):
+    def __init__(self, scale=1.0, in_channel = 256):
         super(Block35, self).__init__()
 
         self.scale = scale
@@ -43,7 +42,7 @@ class Block35(nn.Module):
             BasicConv2d(48, 64, kernel_size=3, stride=1, padding=1)
         )
 
-        self.conv2d = nn.Conv2d(128, 320, kernel_size=1, stride=1)
+        self.conv2d = nn.Conv2d(128, in_channel, kernel_size=1, stride=1)
         self.relu = nn.ReLU(inplace=False)
 
     def forward(self, x):
@@ -61,15 +60,20 @@ class CSRNet(nn.Module):
     def __init__(self, load_weights=False):
         super(CSRNet, self).__init__()
         self.seen = 0
-        self.frontend_feat = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512]
+        self.frontend_feat = [64, 64, 'M', 128, 128, 'M']
+        self.frontend_feat2 = [256]
+        self.frontend_feat3 = [256, 256, 'M', 512, 512, 512]
         self.backend_feat  = [512, 512, 512,256,128,64]
         self.frontend = make_layers(self.frontend_feat)
-        self.intermediate = BasicConv2d(512, 320, kernel_size=3, padding=1, stride=1)
+        self.frontend2 = make_layers(self.frontend_feat2)
+        self.frontend3 = make_layers(self.frontend_feat3)
+        self.intermediate = BasicConv2d(512, 256, kernel_size=3, padding=1, stride=1)
+        self.pooling = nn.MaxPool2d(kernel_size=2, stride=2)
         # self.backend = make_layers(self.backend_feat,in_channels = 512,dilation = True)
-        self.backend = Block35(in_channel=320)
+        self.backend = Block35(in_channel=256)
         # self.backend_repeat = Block35(in_channel=320)
         # self.output_layer = nn.Conv2d(64, 1, kernel_size=1)
-        self.output_layer = BasicConv2d(320, 1, kernel_size=3, padding=1, stride=1)
+        self.output_layer = BasicConv2d(256, 1, kernel_size=3, padding=1, stride=1)
         if not load_weights:
             mod = models.vgg16(pretrained = True)
             self._initialize_weights()
@@ -77,7 +81,10 @@ class CSRNet(nn.Module):
                 list(self.frontend.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
     def forward(self,x):
         x = self.frontend(x)
+        x_receptive_field_11 = self.frontend2(x)
+        x = self.frontend3(x_receptive_field_11)
         x = self.intermediate(x)
+        x = self.pooling(x_receptive_field_11) + x
         x = self.backend(x)
         x = self.backend(x)
         x = self.backend(x)
