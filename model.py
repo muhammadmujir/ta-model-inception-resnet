@@ -65,8 +65,8 @@ class CSRNet(nn.Module):
         self.frontend_feat3 = [256, 256, 'M', 512, 512, 512]
         self.backend_feat  = [512, 512, 512,256,128,64]
         self.frontend = make_layers(self.frontend_feat)
-        self.frontend2 = make_layers(self.frontend_feat2)
-        self.frontend3 = make_layers(self.frontend_feat3)
+        self.frontend2 = make_layers(self.frontend_feat2, in_channels=128)
+        self.frontend3 = make_layers(self.frontend_feat3, in_channels=256)
         self.intermediate = BasicConv2d(512, 256, kernel_size=3, padding=1, stride=1)
         self.pooling = nn.MaxPool2d(kernel_size=2, stride=2)
         # self.backend = make_layers(self.backend_feat,in_channels = 512,dilation = True)
