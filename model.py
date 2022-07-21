@@ -68,7 +68,7 @@ class CSRNet(nn.Module):
         self.frontend2 = make_layers(self.frontend_feat2, in_channels=128)
         self.frontend3 = make_layers(self.frontend_feat3, in_channels=256)
         self.intermediate = BasicConv2d(512, 256, kernel_size=3, padding=1, stride=1)
-        self.pooling = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.upsample = nn.UpsamplingBilinear2d(scale_factor=2)
         # self.backend = make_layers(self.backend_feat,in_channels = 512,dilation = True)
         self.backend = Block35(in_channel=256)
         # self.backend_repeat = Block35(in_channel=320)
@@ -96,7 +96,7 @@ class CSRNet(nn.Module):
         x_receptive_field_11 = self.frontend2(x)
         x = self.frontend3(x_receptive_field_11)
         x = self.intermediate(x)
-        x = self.pooling(x_receptive_field_11) + x
+        x = self.upsample(x) + x_receptive_field_11
         x = self.backend(x)
         x = self.backend(x)
         x = self.backend(x)
