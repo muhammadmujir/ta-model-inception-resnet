@@ -81,11 +81,11 @@ class CSRNet(nn.Module):
             breakPoint = [len(self.frontend.state_dict().items()), len(self.frontend.state_dict().items())+len(self.frontend2.state_dict().items())]
             for i in range(totalLayer):
                 if i < breakPoint[0]:
-                    self.frontend.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                    list(self.frontend.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
                 elif i < breakPoint[1]:
-                    self.frontend2.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                    list(self.frontend2.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
                 else:
-                    self.frontend3.state_dict().items()[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+                    list(self.frontend3.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
                     
     def forward(self,x):
         x = self.frontend(x)
