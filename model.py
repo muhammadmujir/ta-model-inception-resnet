@@ -93,10 +93,9 @@ class CSRNet(nn.Module):
                     
     def forward(self,x):
         x = self.frontend(x)
-        x_receptive_field_11 = self.frontend2(x)
-        x = self.frontend3(x_receptive_field_11)
+        x = self.frontend2(x)
+        x = self.frontend3(x)
         x = self.intermediate(x)
-        x = self.pooling(x_receptive_field_11) + x
         x = self.backend(x)
         x = self.backend(x)
         x = self.backend(x)
