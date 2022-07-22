@@ -61,6 +61,14 @@ def cal_new_size(im_h, im_w, min_size, max_size):
             ratio = 1.0
     return im_h, im_w, ratio
 
+def resize_max_dimen(im_h, im_w, size = 1024):
+    max_dimen = im_w if im_w > im_h else im_h
+    ratio = 1.0
+    if max_dimen > size: 
+        ratio = 1.0 * size / max_dimen
+    im_h = round(im_h * ratio)
+    im_w = round(im_w * ratio)
+    return im_h, im_w, ratio
 
 def load_data_large_size(img_path, train = True, crop=True, dx = None, dy = None):
     min_size = 512
@@ -133,7 +141,10 @@ def load_data_ucf(img_path,train = True, isCrop = False, isFlip = False, dx = No
                 dy = int(random.random()*img.size[1]*0.4)
             img = img.crop((dx,dy,crop_size[0]+dx,crop_size[1]+dy))
             target = target[dy:crop_size[1]+dy,dx:crop_size[0]+dx]
-    
+    else:
+        img_h, img_w, ratio = resize_max_dimen(img.size[1], img.size[0])
+        target = cv2.resize(target,(img_w,img_h),interpolation = cv2.INTER_CUBIC)/(ratio*ratio)
+        img = img.resize((img_w,img_h))
     if isFlip:
         if random.random()>0.8:
             target = np.fliplr(target)
