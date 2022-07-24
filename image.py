@@ -33,8 +33,8 @@ def load_data(img_path,train = True, isCrop = False, isFlip = False, dx = None, 
     # target = cv2.resize(target,(int(target.shape[1]//8),int(target.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
     
     if isCrop:
-        return img,None,dx,dy
-    return img,None,0,0
+        return img,0,dx,dy
+    return img,0,0,0
 
 def cal_new_size(im_h, im_w, min_size, max_size):
     if im_h < im_w:
@@ -153,5 +153,5 @@ def load_data_ucf(img_path,train = True, isCrop = False, isFlip = False, dx = No
     # target = cv2.resize(target,(int(target.shape[1]//8),int(target.shape[0]//8)),interpolation = cv2.INTER_CUBIC)*64
     
     if isCrop:
-        return img,None,dx,dy
-    return img,None,0,0
+        return img,0,dx,dy
+    return img,0,0,0
