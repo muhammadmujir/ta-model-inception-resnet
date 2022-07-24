@@ -36,6 +36,7 @@ from utils import saveLargeListIntoCSV
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
+parser.add_argument('img_format', metavar='IMAGE_FORMAT', help='image extension')
 parser.add_argument('gpu',metavar='GPU', type=str, help='GPU id to use.')
 parser.add_argument('best_result_count', type=int, metavar='BEST_RESULT_COUNT', help='best result count')
 parser.add_argument('--print-freq', '-pf', type=int, default=50, metavar='PRINT_FREQ', help='print frequency')
@@ -111,7 +112,7 @@ def main():
         print("Checkpoint Not Set")     
     model.eval()
     # maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
-    paths = glob.glob(os.path.join(img_path, '*.jpg'))
+    paths = glob.glob(os.path.join(img_path, '*.{}'.format(args.img_format)))
     countList = np.load(glob.glob(os.path.join(img_path, '*.npy'))[0])
     test_loader = DataLoader(
     dataset.listDataset(paths,
