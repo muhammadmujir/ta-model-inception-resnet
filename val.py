@@ -74,7 +74,7 @@ def main():
     best_result_count = args.best_result_count
     isCudaAvailable = True if args.gpu != 'None' else False 
     maeByCount = 0.0
-    maeByPixel = 0.0
+    # maeByPixel = 0.0
     
     pathBestResult = []
     cropBestResult = []
@@ -83,8 +83,8 @@ def main():
     
     bestMaeResult = []
     worstMaeResult = []
-    bestPixelMaeResult = []
-    worstPixelMaeResult = []
+    # bestPixelMaeResult = []
+    # worstPixelMaeResult = []
     
     # bestImage = []
     # bestTargetDensity = []
@@ -110,8 +110,9 @@ def main():
     else:
         print("Checkpoint Not Set")     
     model.eval()
-    maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
+    # maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
     paths = glob.glob(os.path.join(img_path, '*.jpg'))
+    countList = np.load(glob.glob(os.path.join(img_path, '*.npy'))[0])
     test_loader = DataLoader(
     dataset.listDataset(paths,
                    shuffle=False,
@@ -129,18 +130,18 @@ def main():
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
-        target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
-        target = Variable(target)
-        mae = abs(output.data.sum()-toDevice(target.sum().type(torch.FloatTensor)))
+        # target = toDevice(target.type(torch.FloatTensor).unsqueeze(0))
+        # target = Variable(target)
+        mae = abs(output.data.sum()-countList[i])
         maeByCount += mae
-        pixelMae = maeCriterion(output, target).item()
-        maeByPixel += pixelMae
+        # pixelMae = maeCriterion(output, target).item()
+        # maeByPixel += pixelMae
         
         if len(bestMaeResult) < best_result_count:
             pathBestResult.append(path)
             cropBestResult.append((dx.item(),dy.item()))
             bestMaeResult.append(mae)
-            bestPixelMaeResult.append(pixelMae)
+            # bestPixelMaeResult.append(pixelMae)
             # bestImage.append(img)
             # bestTargetDensity.append(target)
             bestOutputDensity.append(output)
@@ -152,7 +153,7 @@ def main():
                 pathBestResult[indexOfMaxMae] = path
                 cropBestResult[indexOfMaxMae] = (dx.item(),dy.item())
                 bestMaeResult[indexOfMaxMae] = mae
-                bestPixelMaeResult[indexOfMaxMae] = pixelMae
+                # bestPixelMaeResult[indexOfMaxMae] = pixelMae
                 # bestImage[indexOfMaxMae] = img
                 # bestTargetDensity[indexOfMaxMae] = target
                 bestOutputDensity[indexOfMaxMae] = output
@@ -163,7 +164,7 @@ def main():
             pathWorstResult.append(path)
             cropWorstResult.append((dx.item(),dy.item()))
             worstMaeResult.append(mae)
-            worstPixelMaeResult.append(pixelMae)
+            # worstPixelMaeResult.append(pixelMae)
             worstOutputDensity.append(output)
             # worstOutputSum.append(output.data.sum())
             # worstTargetSum.append(toDevice(target.sum().type(torch.FloatTensor)))
@@ -173,14 +174,14 @@ def main():
                 pathWorstResult[indexOfMinMae] = path
                 cropWorstResult[indexOfMinMae] = (dx.item(),dy.item())
                 worstMaeResult[indexOfMinMae] = mae
-                worstPixelMaeResult[indexOfMinMae] = pixelMae
+                # worstPixelMaeResult[indexOfMinMae] = pixelMae
                 worstOutputDensity[indexOfMinMae] = output
                 # worstOutputSum[indexOfMinMae] = output.data.sum()
                 # worstTargetSum[indexOfMinMae] = toDevice(target.sum().type(torch.FloatTensor))
         
                 
     print ("AVG MAE : ",maeByCount.item()/len(paths))
-    print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
+    # print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     print("Original Image - Target Density Map - Predicted Density Map")
     
     if args.print_all or args.print_best:
@@ -191,9 +192,10 @@ def main():
             # img = bestImage[i].detach().cpu()
             img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1])
             print("Output Sum: ", bestOutputDensity[i].data.sum().item())
-            print("Target Sum: ", target.sum())
+            # print("Target Sum: ", target.sum())
+            print("Target Sum: ", countList[i])
             print("BASED COUNT MAE: ", bestMaeResult[i].item())
-            print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
+            # print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
             plt.figure()        
             img = Variable(toDevice(transform(img)))
             img = img.detach().cpu()
@@ -218,7 +220,7 @@ def main():
             print("Output Sum: ", worstOutputDensity[i].data.sum().item())
             print("Target Sum: ", target.sum())
             print("BASED COUNT MAE: ", worstMaeResult[i].item())
-            print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
+            # print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
             plt.figure()     
             img = Variable(toDevice(transform(img)))
             img = img.detach().cpu()
@@ -332,5 +334,5 @@ def checkSimilarity():
     plt.show()
 
 if __name__ == '__main__':
-    # main() 
-    valSingleImage("F:\\Backup\\TA\\Model\\model_best_partA_200epoch.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\terminal\\crop1.png")
+    main() 
+    # valSingleImage("F:\\Backup\\TA\\Model\\model_best_partA_200epoch.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\terminal\\crop1.png")
