@@ -178,7 +178,7 @@ def main():
             indexOfMinMae = worstMaeResult.index(min(worstMaeResult))
             if mae > min(worstMaeResult):
                 pathWorstResult[indexOfMinMae] = path
-                worstTargetIndex[indexOfMaxMae] = i
+                worstTargetIndex[indexOfMinMae] = i
                 cropWorstResult[indexOfMinMae] = (dx.item(),dy.item())
                 worstMaeResult[indexOfMinMae] = mae
                 # worstPixelMaeResult[indexOfMinMae] = pixelMae
