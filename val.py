@@ -180,7 +180,7 @@ def main():
                 # worstTargetSum[indexOfMinMae] = toDevice(target.sum().type(torch.FloatTensor))
         
                 
-    print ("AVG MAE : ",maeByCount.item()/len(paths))
+    print ("AVG MAE : ",maeByCount/len(paths))
     # print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
     print("Original Image - Target Density Map - Predicted Density Map")
     
