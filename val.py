@@ -89,6 +89,8 @@ def main():
     
     # bestImage = []
     # bestTargetDensity = []
+    bestTargetIndex = []
+    worstTargetIndex = []
     bestOutputDensity = []
     worstOutputDensity = []
     
@@ -140,6 +142,7 @@ def main():
         
         if len(bestMaeResult) < best_result_count:
             pathBestResult.append(path)
+            bestTargetIndex.append(i)
             cropBestResult.append((dx.item(),dy.item()))
             bestMaeResult.append(mae)
             # bestPixelMaeResult.append(pixelMae)
@@ -152,6 +155,7 @@ def main():
             indexOfMaxMae = bestMaeResult.index(max(bestMaeResult)) 
             if mae < max(bestMaeResult):
                 pathBestResult[indexOfMaxMae] = path
+                bestTargetIndex[indexOfMaxMae] = i
                 cropBestResult[indexOfMaxMae] = (dx.item(),dy.item())
                 bestMaeResult[indexOfMaxMae] = mae
                 # bestPixelMaeResult[indexOfMaxMae] = pixelMae
@@ -163,6 +167,7 @@ def main():
                 
         if len(pathWorstResult) < best_result_count:
             pathWorstResult.append(path)
+            worstTargetIndex.append(i)
             cropWorstResult.append((dx.item(),dy.item()))
             worstMaeResult.append(mae)
             # worstPixelMaeResult.append(pixelMae)
@@ -173,6 +178,7 @@ def main():
             indexOfMinMae = worstMaeResult.index(min(worstMaeResult))
             if mae > min(worstMaeResult):
                 pathWorstResult[indexOfMinMae] = path
+                worstTargetIndex[indexOfMaxMae] = i
                 cropWorstResult[indexOfMinMae] = (dx.item(),dy.item())
                 worstMaeResult[indexOfMinMae] = mae
                 # worstPixelMaeResult[indexOfMinMae] = pixelMae
@@ -183,7 +189,7 @@ def main():
                 
     print ("AVG MAE : ",maeByCount/len(paths))
     # print ("AVG MAE BY PIXEL: ", maeByPixel/len(paths))
-    print("Original Image - Target Density Map - Predicted Density Map")
+    print("Original Image - Predicted Density Map")
     
     if args.print_all or args.print_best:
         print("---------------------------Best-----------------------------")
@@ -194,7 +200,7 @@ def main():
             img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropBestResult[i][0], dy=cropBestResult[i][1])
             print("Output Sum: ", bestOutputDensity[i].data.sum().item())
             # print("Target Sum: ", target.sum())
-            print("Target Sum: ", countList[i])
+            print("Target Sum: ", countList[bestTargetIndex[i]])
             print("BASED COUNT MAE: ", bestMaeResult[i].item())
             # print("BASED PIXEL MAE: ", bestPixelMaeResult[i])
             plt.figure()        
@@ -219,7 +225,7 @@ def main():
             # img = bestImage[i].detach().cpu()
             img, target, dx, dy = load_data(path, isCrop=args.crop, dx=cropWorstResult[i][0], dy=cropWorstResult[i][1]) if not args.large_file else load_data_ucf(path, isCrop=args.crop, dx=cropWorstResult[i][0], dy=cropWorstResult[i][1])
             print("Output Sum: ", worstOutputDensity[i].data.sum().item())
-            print("Target Sum: ", countList[i])
+            print("Target Sum: ", countList[worstTargetIndex[i]])
             print("BASED COUNT MAE: ", worstMaeResult[i].item())
             # print("BASED PIXEL MAE: ", worstPixelMaeResult[i])
             plt.figure()     
