@@ -155,4 +155,3 @@ def load_data_ucf(img_path,train = True, isCrop = False, isFlip = False, dx = No
     if isCrop:
         return img,target,dx,dy
     return img,target,0,0
-Fo
