@@ -31,7 +31,7 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
 from image import *
-from utils import saveLargeListIntoCSV
+# from utils import saveLargeListIntoCSV
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
