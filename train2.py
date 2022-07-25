@@ -21,7 +21,7 @@ import glob
 import os
 from dataloader import DataLoader
 import math
-from loss import CustomMSELoss
+from loss import CustomMSELoss, LossPerPatch
 
 parser = argparse.ArgumentParser(description='PyTorch CSRNet')
 
@@ -95,11 +95,13 @@ def main():
         torch.cuda.manual_seed(args.seed)
         model = model.cuda()
         # criterion = nn.MSELoss(size_average=False).cuda()
-        criterion = nn.L1Loss(size_average=False).cuda()
+        # criterion = nn.L1Loss(size_average=False).cuda()
+        criterion = LossPerPatch().cuda()
     else:
         model = model.cpu()
         # criterion = nn.MSELoss(size_average=False).cpu()
-        criterion = nn.L1Loss(size_average=False).cpu()
+        # criterion = nn.L1Loss(size_average=False).cpu()
+        criterion = LossPerPatch().cpu()
     
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
