@@ -311,7 +311,7 @@ def valSingleImage(modelPath, imgPath, usingCuda = False):
     temp = np.asarray(output.detach().cpu().reshape(output.detach().cpu().shape[2],output.detach().cpu().shape[3]))
     plt.imshow(temp,cmap = c.jet)
     plt.show()
-    saveLargeListIntoCSV(temp, "C:\\Users\\Mujir\\Desktop\\foto\\terminal")
+    # saveLargeListIntoCSV(temp, "C:\\Users\\Mujir\\Desktop\\foto\\terminal")
 
 def checkSimilarity():
     mat = io.loadmat("D:\\TA\Dataset\\ShanghaiTech-Sample\\ShanghaiTech\\part_B\\test_data\\ground-truth\\GT_IMG_281.mat")
