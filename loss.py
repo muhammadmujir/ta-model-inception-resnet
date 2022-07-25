@@ -19,10 +19,11 @@ class CustomMSELoss(torch.nn.MSELoss):
         return super(CustomMSELoss, self).forward(input, target)
 
 class LossPerPatch(torch.nn.L1Loss):
-    def __init__(self, kernelSize=5, stride=5, mode='average') -> None:
+    def __init__(self, kernelSize=5, stride=5, mode='average', device='cuda') -> None:
         super(LossPerPatch, self).__init__(size_average=None, reduce=None, reduction='sum')
         self.kernelSize = kernelSize
         self.mode = mode
+        self.device = device
         if mode == 'average':
             self.pooling = torch.nn.AvgPool2d(kernel_size=kernelSize, stride=stride)
         else:
@@ -39,6 +40,10 @@ class LossPerPatch(torch.nn.L1Loss):
             padding = torch.zeros((input.shape[len(input.shape)-2], self.kernelSize-mod))
             for i in range(len(input.shape)-2):
                 padding = padding.unsqueeze(0)
+                if self.device == 'cuda':
+                    padding = padding.cuda()
+                else:
+                    padding = padding.cpu()
             input = torch.cat((input, padding), len(input.shape)-1)
             target = torch.cat((target, padding), len(input.shape)-1)
         # Add Padding At Bottom of Tensor
@@ -47,6 +52,10 @@ class LossPerPatch(torch.nn.L1Loss):
             padding = torch.zeros((self.kernelSize-mod,input.shape[len(input.shape)-1]))
             for i in range(len(input.shape)-2):
                 padding = padding.unsqueeze(0)
+                if self.device == 'cuda':
+                    padding = padding.cuda()
+                else:
+                    padding = padding.cpu()
             input = torch.cat((input, padding), len(input.shape)-2)
             target = torch.cat((target, padding), len(input.shape)-2)
         input = self.pooling(input)
