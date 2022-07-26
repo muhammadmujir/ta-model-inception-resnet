@@ -12,7 +12,7 @@ class listDataset(Dataset):
         if train:
             # root = root *4
             root = root * duplicate
-        random.shuffle(root)
+            random.shuffle(root)
         self.nSamples = len(root)
         self.lines = root
         self.transform = transform
