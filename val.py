@@ -32,7 +32,7 @@ from torch.autograd import Variable
 from dataloader import DataLoader
 import dataset
 from image import *
-from utils import saveLargeListIntoCSV
+from utils import saveLargeListIntoCSV, get_order
 
 parser = argparse.ArgumentParser(description='Model Testing')
 parser.add_argument('img_path', metavar='TEST_IMAGE', help='path to testing image')
@@ -114,7 +114,7 @@ def main():
         print("Checkpoint Not Set")     
     model.eval()
     # maeCriterion = nn.L1Loss(size_average=False).cuda() if isCudaAvailable else nn.L1Loss(size_average=False).cpu()
-    paths = glob.glob(os.path.join(img_path, '*.{}'.format(args.img_format)))
+    paths = sorted(glob.glob(os.path.join(img_path, '*.{}'.format(args.img_format))), key=get_order)
     countList = np.load(glob.glob(os.path.join(img_path, '*.npy'))[0])
     test_loader = DataLoader(
     dataset.listDataset(paths,

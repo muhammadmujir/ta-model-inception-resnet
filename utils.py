@@ -5,6 +5,16 @@ from constant import CHECKPOINT_PATH
 from constant import CHECKPOINT_PATH_LOCAL
 import numpy as np
 import os
+import re 
+import math
+from pathlib import Path 
+
+def get_order(file):
+    file_pattern = re.compile(r'.*?(\d+).*?')
+    match = file_pattern.match(Path(file).name)
+    if not match:
+        return math.inf
+    return int(match.groups()[0])
 
 def save_net(fname, net):
     with h5py.File(fname, 'w') as h5f:
