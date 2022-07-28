@@ -19,7 +19,7 @@ import json
 import torchvision.transforms.functional as F
 from matplotlib import cm
 from image import *
-from model import CSRNet
+from model import MSCnn
 import torch
 from torchvision import datasets, transforms
 from tqdm import tqdm
@@ -97,7 +97,7 @@ def main():
     # worstTargetSum = []
     transform = transforms.Compose([transforms.ToTensor()])
     
-    model = CSRNet().cuda() if isCudaAvailable else CSRNet().cpu()
+    model = MSCnn().cuda() if isCudaAvailable else MSCnn().cpu()
     if args.pre:
         if os.path.isfile(args.pre):
             print("=> loading checkpoint '{}'".format(args.pre))
@@ -254,8 +254,7 @@ def valManyImages():
         for img_path in glob.glob(os.path.join(path, '*.jpg')):
            img_paths.append(img_path)
     
-    #model = CSRNet()
-    model = InceptionResNetV2()
+    model = MSCnn()
     
     #defining the model
     if (isCudaAvailable):
@@ -292,7 +291,7 @@ def valSingleImage(modelPath, imgPath, usingCuda = False):
             std=[0.229, 0.224, 0.225]
         ),
     ])
-    model = CSRNet(load_weights=True).cuda() if usingCuda else CSRNet(load_weights=True).cpu()
+    model = MSCnn(load_weights=True).cuda() if usingCuda else MSCnn(load_weights=True).cpu()
     
     # Wajib diset model.eval() ketika testing, jika tidak maka hasil akan sangat berbeda
     model.eval()
@@ -332,5 +331,5 @@ def checkSimilarity():
     plt.show()
 
 if __name__ == '__main__':
-    # main() 
-    valSingleImage("F:\\Backup\\TA\\Model\\model_best_partA_200epoch.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\terminal\\crop1.png")
+    main() 
+    # valSingleImage("F:\\Backup\\TA\\Model\\model_best_partA_200epoch.pth.tar", "C:\\Users\\Mujir\\Desktop\\foto\\terminal\\crop1.png")

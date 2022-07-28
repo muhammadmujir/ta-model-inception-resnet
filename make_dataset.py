@@ -21,7 +21,6 @@ import scipy.spatial
 import json
 from matplotlib import cm as CM
 from image import *
-from model import CSRNet
 import torch
 from tqdm import tqdm
 

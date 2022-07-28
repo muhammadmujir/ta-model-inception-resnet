@@ -1,55 +1,34 @@
-# CSRNet-pytorch
-
-This is the PyTorch version repo for [CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes](https://arxiv.org/abs/1802.10062) in CVPR 2018, which delivered a state-of-the-art, straightforward and end-to-end architecture for crowd counting tasks.
+# MSCnn-pytorch
 
 ## Datasets
 ShanghaiTech Dataset: [Google Drive](https://drive.google.com/open?id=16dhJn7k4FWVwByRsQAEpl9lwjuV03jVI)
-
+UCF_QNRF Dataset: [Official Source](https://www.crcv.ucf.edu/data/ucf-qnrf/UCF-QNRF_ECCV18.zip)
 ## Prerequisites
 We strongly recommend Anaconda as the environment.
 
-Python: 2.7
+Python: 3.9
 
-PyTorch: 0.4.0
+PyTorch: 1.12.0
 
 CUDA: 9.2
 ## Ground Truth
 
-Please follow the `make_dataset.ipynb ` to generate the ground truth. It shall take some time to generate the dynamic ground truth. Note you need to generate your own json file.
+To generate Ground Truth density map, set the path_train and path_test variabel to specific location as per dataset directory structure.
+Then, to start generating density map ground truth, run the `python optimize_make_dataset.py `
 
 ## Training Process
 
-Try `python train.py train.json val.json 0 0` to start training process.
+Try `python train.py "train path" "test path" "result path" --pre "path to pretrained model" gpu task batch_size worker_count epoch_count print_count` to start training process.
+Example `python train.py "/home/mujir/train" "/home/mujir/test" "/home/mujir/result" --pre "/home/mujir/result/checkpoint.pth.tar" 0 0 1 4 200 50`
 
 ## Validation
 
-Follow the `val.ipynb` to try the validation. You can try to modify the notebook and see the output of each image.
+Try `python val.py "testing_image_path" --pre "path to pretrained model" gpu best_result_count`
+Example `python val.py "/home/mujir/test/" --pre "/home/mujir/result/best_model.pth.tar" 0 3`
+
 ## Results
 
-ShanghaiA MAE: 66.4 [Google Drive](https://drive.google.com/open?id=1Z-atzS5Y2pOd-nEWqZRVBDMYJDreGWHH)
-ShanghaiB MAE: 10.6 [Google Drive](https://drive.google.com/open?id=1zKn6YlLW3Z9ocgPbP99oz7r2nC7_TBXK)
-
-## References
-
-If you find the CSRNet useful, please cite our paper. Thank you!
-
-```
-@inproceedings{li2018csrnet,
-  title={CSRNet: Dilated convolutional neural networks for understanding the highly congested scenes},
-  author={Li, Yuhong and Zhang, Xiaofan and Chen, Deming},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  pages={1091--1100},
-  year={2018}
-}
-```
-Please cite the Shanghai datasets and other works if you use them.
-
-```
-@inproceedings{zhang2016single,
-  title={Single-image crowd counting via multi-column convolutional neural network},
-  author={Zhang, Yingying and Zhou, Desen and Chen, Siqin and Gao, Shenghua and Ma, Yi},
-  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
-  pages={589--597},
-  year={2016}
-}
-```
+Shanghai Part A MAE: 82.89
+Shanghai Part B MAE: 10.56
+UCF_QNRF MAE: 210,26
+Pretrained Model [Google Drive](https://drive.google.com/file/d/1C_Wsag3C8c2d2Pmg3hehdZ2HRfYXwhi1/view?usp=sharing)

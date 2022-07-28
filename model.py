@@ -57,9 +57,9 @@ class Block35(nn.Module):
         return out
 
 
-class CSRNet(nn.Module):
+class MSCnn(nn.Module):
     def __init__(self, load_weights=False):
-        super(CSRNet, self).__init__()
+        super(MSCnn, self).__init__()
         self.seen = 0
         self.frontend_feat = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512]
         self.backend_feat  = [512, 512, 512,256,128,64]
@@ -123,7 +123,7 @@ def printModelParams(file):
     img = transform(img)
     # the below code is needed to insert singleton batch because pytorch expects a batch of images as an input.
     img = img[None, ...]
-    model = CSRNet().cpu()
+    model = MSCnn().cpu()
     print(summary(model, Variable(img.cpu())))
 
 def printModel():
