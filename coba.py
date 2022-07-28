@@ -241,3 +241,97 @@ correlate1d(a, [1,1,1,1], axis=0, mode='constant')
 #    contoh correlate1d(a, [-1, 1, 0], origin = -1) -> penempatan hasil 
 #           convolusi diletakkan pada indkes wieght ke -> 
 #           center of weight - 1 = 1 - 1 = 0
+
+
+# =======================================================================================
+# UNDERSTANDING Torch.Backward --> process to calculate gradient
+# https://towardsdatascience.com/pytorch-autograd-understanding-the-heart-of-pytorchs-magic-2686cd94ec95#:~:text=is%20not%20needed.-,Backward()%20function,grad%20of%20every%20leaf%20node.
+# =======================================================================================
+
+import torch
+
+# Creating the graph
+x = torch.tensor(1.0, requires_grad = True)
+y = torch.tensor(4.0, requires_grad= True)
+z = y / x
+
+# Displaying
+for i, name in zip([x, y, z], "xyz"):
+    print(f"{name}\ndata: {i.data}\nrequires_grad: {i.requires_grad}\n\
+grad: {i.grad}\ngrad_fn: {i.grad_fn}\nis_leaf: {i.is_leaf}\n")
+
+print("before backward:")
+print(x.grad)
+print(y.grad)
+print(z.grad)
+print("after backward:")
+z.backward()
+print(x.grad)
+print(y.grad)
+print(z.grad)
+
+
+# ===================================================================================
+# =========================Convert RGB===============================================
+# ===================================================================================
+
+# Old RGB Matrix
+# [[[ 1  2  3  4  5]
+#   [ 6  7  8  9 10]
+#   [ 7  2  8  4  9]
+#   [ 3  2  8  5  9]]
+
+#  [[ 5  2  7  4  5]
+#   [ 9  7  8  6  1]
+#   [ 3  2 10  4  9]
+#   [ 6  2  9  3  9]]
+
+#  [[ 5  2  7  4  5]
+#   [ 9  7  8  6 10]
+#   [ 3  2  5  4  9]
+#   [ 1  2  1  4  9]]]
+
+# Valid RGB Matrix
+# [[[0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]]
+
+#  [[0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]]
+
+#  [[0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]]
+
+#  [[0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]
+#   [0. 0. 0.]]]
+
+import numpy as np
+a = np.array([[[[1,2,3,4,5],[6,7,8,9,10],[7,2,8,4,9],[3,2,8,5,9]],[[5,2,7,4,5],[9,7,8,6,1],[3,2,10,4,9],[6,2,9,3,9]],[[5,2,7,4,5],[9,7,8,6,10],[3,2,5,4,9],[1,2,1,4,9]]]])
+print(a.shape)
+# (1, 3, 4, 5)
+# (1, channel, height, width)
+# a = a.reshape(a.shape[1],a.shape[2],a.shape[3])
+# b = np.zeros((a.shape[1], a.shape[2], a.shape[0]))
+matrix = []
+for i in range(a.shape[2]):
+    row = []
+    for j in range(a.shape[3]):
+        point = [a[0][0][i][j],a[0][1][i][j],a[0][2][i][j]]
+        row.append(point)
+    matrix.append(row)
+
+matrix = np.array(matrix)
+print(matrix.shape)
+print(matrix)
+            

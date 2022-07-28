@@ -187,7 +187,7 @@ def train(train_list, model, criterion, optimizer, epoch):
     model.train()
     end = time.time()
     
-    for i,(img, target, path) in enumerate(train_loader):
+    for i,(img, target, path, dx, dy) in enumerate(train_loader):
         data_time.update(time.time() - end)
         img = toDevice(img)
         img = Variable(img)

@@ -3,6 +3,8 @@ import torch
 import shutil
 from constant import CHECKPOINT_PATH
 from constant import CHECKPOINT_PATH_LOCAL
+import numpy as np
+import os
 
 def save_net(fname, net):
     with h5py.File(fname, 'w') as h5f:
@@ -18,3 +20,11 @@ def save_checkpoint(state, is_best,task_id, path, filename='checkpoint.pth.tar')
     torch.save(state, path+filename)
     if is_best:
         shutil.copyfile(path+filename, path+'model_best.pth.tar')            
+
+def saveLargeListIntoCSV(arr, path):
+    arr = np.array(arr)
+    resultCSV = open(os.path.join(path, 'result.csv'), 'w')
+    for row in arr:
+        for col in row:
+            resultCSV.write('%s;' % str(col))
+        resultCSV.write('\n')
