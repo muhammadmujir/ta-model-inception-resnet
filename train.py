@@ -244,7 +244,7 @@ def validate(val_list, model, criterion):
     maeLossByCount = AverageMeter()
     mseLossByCount = AverageMeter()
     
-    for i,(img, target, path) in enumerate(test_loader):
+    for i,(img, target, path, dx, dy) in enumerate(test_loader):
         img = toDevice(img)
         img = Variable(img)
         output = model(img)
