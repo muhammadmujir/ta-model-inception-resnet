@@ -21,7 +21,7 @@ import glob
 import os
 from dataloader import DataLoader
 import math
-from loss import CustomMSELoss
+from loss import CustomMSELoss, LossPerPatch
 
 parser = argparse.ArgumentParser(description='PyTorch Multi Scale CNN')
 
